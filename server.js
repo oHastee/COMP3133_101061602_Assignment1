@@ -26,7 +26,6 @@ async function startServer() {
         typeDefs,
         resolvers,
         context: ({ req }) => {
-            // Attach user info (if any) to the context for protected operations
             const user = authenticate(req);
             return { user };
         },
