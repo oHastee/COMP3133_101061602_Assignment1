@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="3e62a93a-7f5b-448f-b4c7-6c4edf8004d0" name="Changes" comment="Updated readme file" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="JavaScript File" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/backend" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;oHastee&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;git@github.com:oHastee/COMP3133_101061602_Assignment1.git&quot;,
+    &quot;accountId&quot;: &quot;f12f3796-337a-4a7d-bd51-0dc4ec76106d&quot;
+  }
+}</component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 7
+}</component>
+  <component name="ProjectId" id="2suUOujJhvzs9YzEA1UF5G9QFpn" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Node.js.User.js.executor": "Run",
+    "Node.js.server.js.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "main",
+    "last_opened_file_path": "/Users/oscarpiedrasantadiaz/Desktop/T177_Sem6/Comp3133/Assignment1",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "project.propVCSSupport.DirectoryMappings",
+    "ts.external.directory.path": "/Applications/WebStorm.app/Contents/plugins/javascript-plugin/jsLanguageServicesImpl/external",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$" />
+    </key>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-js-predefined-d6986cc7102b-822845ee3bb5-JavaScript-WS-243.23654.157" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="3e62a93a-7f5b-448f-b4c7-6c4edf8004d0" name="Changes" comment="" />
+      <created>1739304924715</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1739304924715</updated>
+      <workItem from="1739304926446" duration="8882000" />
+      <workItem from="1742924706238" duration="30000" />
+      <workItem from="1743445888898" duration="2000" />
+      <workItem from="1743445898249" duration="347000" />
+      <workItem from="1743446257370" duration="777000" />
+    </task>
+    <task id="LOCAL-00001" summary="Employee Model">
+      <option name="closed" value="true" />
+      <created>1739305903304</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1739305903304</updated>
+    </task>
+    <task id="LOCAL-00002" summary="User Model">
+      <option name="closed" value="true" />
+      <created>1739305923329</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1739305923329</updated>
+    </task>
+    <task id="LOCAL-00003" summary="Updated added .env">
+      <option name="closed" value="true" />
+      <created>1739312050520</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1739312050520</updated>
+    </task>
+    <task id="LOCAL-00004" summary="Added resolvers.js">
+      <option name="closed" value="true" />
+      <created>1739312086602</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1739312086602</updated>
+    </task>
+    <task id="LOCAL-00005" summary="Package lock and package.json">
+      <option name="closed" value="true" />
+      <created>1739312114094</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1739312114094</updated>
+    </task>
+    <task id="LOCAL-00006" summary="JWT">
+      <option name="closed" value="true" />
+      <created>1739312136417</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1739312136417</updated>
+    </task>
+    <task id="LOCAL-00007" summary="typeDefs">
+      <option name="closed" value="true" />
+      <created>1739312152520</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1739312152520</updated>
+    </task>
+    <task id="LOCAL-00008" summary="Server.js filer">
+      <option name="closed" value="true" />
+      <created>1739312160455</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1739312160455</updated>
+    </task>
+    <task id="LOCAL-00009" summary="Cleaned up the code">
+      <option name="closed" value="true" />
+      <created>1739312434160</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1739312434160</updated>
+    </task>
+    <task id="LOCAL-00010" summary="Updated readme file">
+      <option name="closed" value="true" />
+      <created>1739314735502</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1739314735502</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Employee Model" />
+    <MESSAGE value="User Model" />
+    <MESSAGE value="Updated added .env" />
+    <MESSAGE value="Added resolvers.js" />
+    <MESSAGE value="Package lock and package.json" />
+    <MESSAGE value="JWT" />
+    <MESSAGE value="typeDefs" />
+    <MESSAGE value="Server.js filer" />
+    <MESSAGE value="Cleaned up the code" />
+    <MESSAGE value="Updated readme file" />
+    <option name="LAST_COMMIT_MESSAGE" value="Updated readme file" />
+  </component>
+</project>
