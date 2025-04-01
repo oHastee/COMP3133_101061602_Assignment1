@@ -100,6 +100,11 @@ const resolvers = {
         id: (parent) => parent._id.toString(),
         created_at: (parent) => parent.created_at ? parent.created_at.toISOString() : null,
         updated_at: (parent) => parent.updated_at ? parent.updated_at.toISOString() : null,
+        // Added this line to see date of joining in view model
+        date_of_joining: (parent) => {
+            if (!parent.date_of_joining) return null;
+            return parent.date_of_joining.toISOString();
+        },
     },
     User: {
         id: (parent) => parent._id.toString(),
