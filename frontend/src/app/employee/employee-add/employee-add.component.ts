@@ -1,17 +1,16 @@
-// frontend/src/app/employee/employee-form/employee-form.component.ts
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { EmployeeService } from '../../core/services/employee.service';
-import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 
 @Component({
-  selector: 'app-employee-form',
+  selector: 'app-employee-add',
   standalone: true,
   imports: [ReactiveFormsModule, CommonModule, RouterModule],
   template: `
     <div class="container">
-      <h2>{{ isEdit ? 'Edit Employee' : 'Add Employee' }}</h2>
+      <h2>Add Employee</h2>
       <form [formGroup]="employeeForm" (ngSubmit)="onSubmit()">
         <!-- First Name -->
         <div class="form-group">
@@ -82,7 +81,7 @@ import { CommonModule } from '@angular/common';
           <input type="file" (change)="onFileSelected($event)" class="form-control" />
         </div>
         <button type="submit" class="btn btn-primary" [disabled]="employeeForm.invalid">
-          {{ isEdit ? 'Update' : 'Add' }} Employee
+          Add Employee
         </button>
       </form>
       <div *ngIf="errorMessage" class="alert alert-danger mt-2">
@@ -94,21 +93,16 @@ import { CommonModule } from '@angular/common';
     .container { max-width: 600px; margin: 2rem auto; }
     .form-group { margin-bottom: 1rem; }
     .alert { margin-top: 1rem; }
+    .form-control.ng-pristine { background-color: #e9ecef; }
+    .form-control.ng-dirty { background-color: #ffffff; }
   `]
 })
-export class EmployeeFormComponent implements OnInit {
+export class EmployeeAddComponent implements OnInit {
   employeeForm: FormGroup;
-  isEdit = false;
-  employeeId: string | null = null;
   errorMessage: string = '';
   selectedFile: File | null = null;
 
-  constructor(
-    private fb: FormBuilder,
-    private route: ActivatedRoute,
-    private router: Router,
-    private employeeService: EmployeeService
-  ) {
+  constructor(private fb: FormBuilder, private router: Router, private employeeService: EmployeeService) {
     this.employeeForm = this.fb.group({
       first_name: ['', Validators.required],
       last_name: ['', Validators.required],
@@ -122,37 +116,7 @@ export class EmployeeFormComponent implements OnInit {
     });
   }
 
-  ngOnInit(): void {
-    this.employeeId = this.route.snapshot.paramMap.get('id');
-    if (this.employeeId) {
-      this.isEdit = true;
-      this.employeeService.searchEmployeeById(this.employeeId).subscribe({
-        next: (res: any) => {
-          const emp = res.data.searchEmployeeById;
-          if (emp) {
-            // Patch form with existing employee data
-            this.employeeForm.patchValue({
-              first_name: emp.first_name,
-              last_name: emp.last_name,
-              designation: emp.designation,
-              department: emp.department,
-              salary: emp.salary,
-              date_of_joining: emp.date_of_joining ? new Date(emp.date_of_joining).toISOString().slice(0,10) : '',
-              email: emp.email,
-              gender: emp.gender,
-              employee_photo: emp.employee_photo
-            });
-          } else {
-            this.errorMessage = 'Employee not found.';
-          }
-        },
-        error: (err: any) => {
-          console.error('Error loading employee:', err);
-          this.errorMessage = 'An error occurred while loading employee data.';
-        }
-      });
-    }
-  }
+  ngOnInit(): void { }
 
   onFileSelected(event: any): void {
     const file: File = event.target.files[0];
@@ -167,39 +131,32 @@ export class EmployeeFormComponent implements OnInit {
   }
 
   onSubmit(): void {
-    if (this.employeeForm.valid) {
-      this.errorMessage = ''; // Clear previous error
-      // Clone form value and remove optional fields if empty
-      const formValue = { ...this.employeeForm.value };
-      if (formValue.email === '') delete formValue.email;
-      if (formValue.gender === '') delete formValue.gender;
-
-      if (this.isEdit && this.employeeId) {
-        const updatedData = { id: this.employeeId, ...formValue };
-        this.employeeService.updateEmployee(updatedData).subscribe({
-          next: () => {
-            console.log('Employee updated successfully');
-            this.router.navigate(['/employees']).then(() => window.location.reload());
-          },
-          error: (err: any) => {
-            console.error('Error updating employee:', err);
-            this.errorMessage = 'An error occurred while updating the employee. Please try again.';
-          }
-        });
-      } else {
-        this.employeeService.addEmployee(formValue).subscribe({
-          next: () => {
-            console.log('Employee added successfully');
-            this.router.navigate(['/employees']).then(() => window.location.reload());
-          },
-          error: (err: any) => {
-            console.error('Error adding employee:', err);
-            this.errorMessage = 'An error occurred while adding the employee. Please try again.';
-          }
-        });
-      }
-    } else {
-      this.errorMessage = 'Please fill out the form correctly.';
+    if (this.employeeForm.invalid) {
+      this.errorMessage = 'Please fill out the required fields correctly.';
+      return;
     }
+    const formValue = { ...this.employeeForm.value };
+    this.errorMessage = '';
+    if (formValue.email === '') delete formValue.email;
+    if (formValue.gender === '') delete formValue.gender;
+
+    // Convert "YYYY-MM-DD" to a UTC ISO string at midnight.
+    formValue.date_of_joining = this.fromYYYYMMDDtoUTC(formValue.date_of_joining);
+
+    this.employeeService.addEmployee(formValue).subscribe({
+      next: () => {
+        console.log('Employee added successfully');
+        this.router.navigate(['/employees']).then(() => window.location.reload());
+      },
+      error: (err: any) => {
+        console.error('Error adding employee:', err);
+        this.errorMessage = 'An error occurred while adding the employee. Please try again.';
+      }
+    });
+  }
+
+  private fromYYYYMMDDtoUTC(dateStr: string): string {
+    const [year, month, day] = dateStr.split('-').map(Number);
+    return new Date(Date.UTC(year, month - 1, day, 0, 0, 0)).toISOString();
   }
 }
