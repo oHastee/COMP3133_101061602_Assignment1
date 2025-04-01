@@ -13,20 +13,21 @@ const resolvers = {
                 $or: [{ username: usernameOrEmail }, { email: usernameOrEmail }]
             });
             if (!user) {
-                throw new Error('User not found');
+                throw new Error('No account found with that username or email.');
             }
             const valid = await bcrypt.compare(password, user.password);
             if (!valid) {
-                throw new Error('Invalid password');
+                throw new Error('Incorrect password. Please try again.');
             }
             const token = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: '1d' });
             return { token, user };
         },
+
         // Retrieve all employees
         getAllEmployees: async (_, __, { user }) => {
-            // Optionally, enforce authentication with: if (!user) throw new Error('Not authenticated');
             return await Employee.find({});
         },
+
         // Search employee by ID
         searchEmployeeById: async (_, { id }) => {
             const employee = await Employee.findById(id);
@@ -35,6 +36,7 @@ const resolvers = {
             }
             return employee;
         },
+
         // Search employees by designation or department
         searchEmployeeByDesignationOrDepartment: async (_, { designation, department }) => {
             const filter = {};
@@ -44,22 +46,35 @@ const resolvers = {
         }
     },
     Mutation: {
-        // Signup Mutation: create a new user
+        // Signup Mutation: create a new user with duplicate checks
         signup: async (_, { username, email, password }) => {
-            const user = new User({ username, email, password });
+            const existingUser = await User.findOne({
+                $or: [{ username: username }, { email: email }]
+            });
+            if (existingUser) {
+                if (existingUser.username === username) {
+                    throw new Error('Username already taken');
+                }
+                if (existingUser.email === email) {
+                    throw new Error('Email already in use');
+                }
+            }
+            // Hash password before saving
+            const hashedPassword = await bcrypt.hash(password, 10);
+            const user = new User({ username, email, password: hashedPassword });
             await user.save();
             return user;
         },
+
         // Add a new employee
         addEmployee: async (_, args, { user }) => {
-            // Optionally, ensure the user is authenticated
             const employee = new Employee(args);
             await employee.save();
             return employee;
         },
+
         // Update employee details by ID
         updateEmployee: async (_, { id, ...updates }, { user }) => {
-            // Optionally, enforce authentication here
             const employee = await Employee.findByIdAndUpdate(
                 id,
                 { ...updates, updated_at: Date.now() },
@@ -70,9 +85,9 @@ const resolvers = {
             }
             return employee;
         },
+
         // Delete employee by ID
         deleteEmployee: async (_, { id }, { user }) => {
-            // Optionally, enforce authentication here
             const employee = await Employee.findByIdAndDelete(id);
             if (!employee) {
                 throw new Error('Employee not found');
@@ -83,13 +98,13 @@ const resolvers = {
     // Custom field resolvers to format date fields and id
     Employee: {
         id: (parent) => parent._id.toString(),
-        created_at: (parent) => parent.created_at.toISOString(),
-        updated_at: (parent) => parent.updated_at.toISOString(),
+        created_at: (parent) => parent.created_at ? parent.created_at.toISOString() : null,
+        updated_at: (parent) => parent.updated_at ? parent.updated_at.toISOString() : null,
     },
     User: {
         id: (parent) => parent._id.toString(),
-        created_at: (parent) => parent.created_at.toISOString(),
-        updated_at: (parent) => parent.updated_at.toISOString(),
+        created_at: (parent) => parent.created_at ? parent.created_at.toISOString() : null,
+        updated_at: (parent) => parent.updated_at ? parent.updated_at.toISOString() : null,
     }
 };
 
