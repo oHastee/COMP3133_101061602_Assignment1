@@ -3,6 +3,14 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { EmployeeService } from '../../core/services/employee.service';
 import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { Apollo } from 'apollo-angular';
+import { gql } from 'apollo-angular';
+
+const UPLOAD_PROFILE_PICTURE = gql`
+  mutation UploadProfilePicture($file: Upload!) {
+    uploadProfilePicture(file: $file)
+  }
+`;
 
 @Component({
   selector: 'app-employee-add',
@@ -102,7 +110,12 @@ export class EmployeeAddComponent implements OnInit {
   errorMessage: string = '';
   selectedFile: File | null = null;
 
-  constructor(private fb: FormBuilder, private router: Router, private employeeService: EmployeeService) {
+  constructor(
+    private fb: FormBuilder,
+    private router: Router,
+    private employeeService: EmployeeService,
+    private apollo: Apollo
+  ) {
     this.employeeForm = this.fb.group({
       first_name: ['', Validators.required],
       last_name: ['', Validators.required],
@@ -122,11 +135,19 @@ export class EmployeeAddComponent implements OnInit {
     const file: File = event.target.files[0];
     if (file) {
       this.selectedFile = file;
-      const reader = new FileReader();
-      reader.onload = () => {
-        this.employeeForm.patchValue({ employee_photo: reader.result });
-      };
-      reader.readAsDataURL(file);
+      // Call the upload mutation instead of converting to Base64
+      this.apollo.mutate({
+        mutation: UPLOAD_PROFILE_PICTURE,
+        variables: { file }
+      }).subscribe({
+        next: (res: any) => {
+          // Set the returned URL into the employee_photo field
+          this.employeeForm.patchValue({ employee_photo: res.data.uploadProfilePicture });
+        },
+        error: (err) => {
+          console.error('File upload error:', err);
+        }
+      });
     }
   }
 

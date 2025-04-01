@@ -4,7 +4,27 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="3e62a93a-7f5b-448f-b4c7-6c4edf8004d0" name="Changes" comment="Updated readme file" />
+    <list default="true" id="3e62a93a-7f5b-448f-b4c7-6c4edf8004d0" name="Changes" comment="Commented out title">
+      <change afterPath="$PROJECT_DIR$/frontend/src/app/create-upload-link.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/typings/apollo-upload-client-createLink.d.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/typings/apollo-upload-client.d.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/src/typings/apollo-upload-client.mjs.d.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/vite.config.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/backend/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/backend/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/server.js" beforeDir="false" afterPath="$PROJECT_DIR$/backend/server.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/resolvers/resolvers.js" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/resolvers/resolvers.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/schemas/typeDefs.js" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/schemas/typeDefs.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/angular.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/angular.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/app/app.config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/app.config.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/app/employee/employee-add/employee-add.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/employee/employee-add/employee-add.component.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/app/employee/employee-list/employee-list.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/employee/employee-list/employee-list.component.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/tsconfig.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/tsconfig.json" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -14,11 +34,12 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="JavaScript File" />
+        <option value="TypeScript File" />
       </list>
     </option>
   </component>
   <component name="Git.Settings">
-    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/backend" />
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="GitHubPullRequestSearchHistory">{
   &quot;lastFilter&quot;: {
@@ -32,32 +53,37 @@
     &quot;accountId&quot;: &quot;f12f3796-337a-4a7d-bd51-0dc4ec76106d&quot;
   }
 }</component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="CurrentFile" />
+  </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 7
 }</component>
   <component name="ProjectId" id="2suUOujJhvzs9YzEA1UF5G9QFpn" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Node.js.User.js.executor": "Run",
-    "Node.js.server.js.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "main",
-    "last_opened_file_path": "/Users/oscarpiedrasantadiaz/Desktop/T177_Sem6/Comp3133/Assignment1",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "project.propVCSSupport.DirectoryMappings",
-    "ts.external.directory.path": "/Applications/WebStorm.app/Contents/plugins/javascript-plugin/jsLanguageServicesImpl/external",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Node.js.User.js.executor&quot;: &quot;Run&quot;,
+    &quot;Node.js.app.config.ts.executor&quot;: &quot;Run&quot;,
+    &quot;Node.js.server.js.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/oscarpiedrasantadiaz/Desktop/T177_Sem6/Comp3133/Assignment1&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;project.propVCSSupport.DirectoryMappings&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;/Users/oscarpiedrasantadiaz/Desktop/T177_Sem6/Comp3133/Assignment1/frontend/node_modules/typescript/lib&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$" />
@@ -82,7 +108,12 @@
       <workItem from="1742924706238" duration="30000" />
       <workItem from="1743445888898" duration="2000" />
       <workItem from="1743445898249" duration="347000" />
-      <workItem from="1743446257370" duration="777000" />
+      <workItem from="1743446257370" duration="972000" />
+      <workItem from="1743447233553" duration="23000" />
+      <workItem from="1743447262984" duration="34647000" />
+      <workItem from="1743540603149" duration="4126000" />
+      <workItem from="1743546139463" duration="246000" />
+      <workItem from="1743546557837" duration="2161000" />
     </task>
     <task id="LOCAL-00001" summary="Employee Model">
       <option name="closed" value="true" />
@@ -164,23 +195,217 @@
       <option name="project" value="LOCAL" />
       <updated>1739314735502</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="Updated backend code to handle login and singup error messages">
+      <option name="closed" value="true" />
+      <created>1743487202464</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1743487202464</updated>
+    </task>
+    <task id="LOCAL-00012" summary="Auth guard for authentication">
+      <option name="closed" value="true" />
+      <created>1743518498219</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1743518498219</updated>
+    </task>
+    <task id="LOCAL-00013" summary="Auth frontend logic">
+      <option name="closed" value="true" />
+      <created>1743518530357</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1743518530357</updated>
+    </task>
+    <task id="LOCAL-00014" summary="Signup page">
+      <option name="closed" value="true" />
+      <created>1743518574734</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1743518574734</updated>
+    </task>
+    <task id="LOCAL-00015" summary="Login page">
+      <option name="closed" value="true" />
+      <created>1743518593034</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1743518593034</updated>
+    </task>
+    <task id="LOCAL-00016" summary="Employee Table List">
+      <option name="closed" value="true" />
+      <created>1743518611218</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1743518611218</updated>
+    </task>
+    <task id="LOCAL-00017" summary="Employee Add/Edit Form">
+      <option name="closed" value="true" />
+      <created>1743518623958</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1743518623959</updated>
+    </task>
+    <task id="LOCAL-00018" summary="gitignore file">
+      <option name="closed" value="true" />
+      <created>1743518643433</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1743518643433</updated>
+    </task>
+    <task id="LOCAL-00019" summary="Employee Service">
+      <option name="closed" value="true" />
+      <created>1743518673137</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1743518673137</updated>
+    </task>
+    <task id="LOCAL-00020" summary="Updated package-lock.json">
+      <option name="closed" value="true" />
+      <created>1743518706531</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1743518706531</updated>
+    </task>
+    <task id="LOCAL-00021" summary="routes frontend">
+      <option name="closed" value="true" />
+      <created>1743518750216</created>
+      <option name="number" value="00021" />
+      <option name="presentableId" value="LOCAL-00021" />
+      <option name="project" value="LOCAL" />
+      <updated>1743518750216</updated>
+    </task>
+    <task id="LOCAL-00022" summary="Config file">
+      <option name="closed" value="true" />
+      <created>1743518762793</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1743518762793</updated>
+    </task>
+    <task id="LOCAL-00023" summary=".gitignore file">
+      <option name="closed" value="true" />
+      <created>1743518776594</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1743518776594</updated>
+    </task>
+    <task id="LOCAL-00024" summary="angular.json">
+      <option name="closed" value="true" />
+      <created>1743518792926</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1743518792926</updated>
+    </task>
+    <task id="LOCAL-00025" summary="App Files">
+      <option name="closed" value="true" />
+      <created>1743518845395</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1743518845395</updated>
+    </task>
+    <task id="LOCAL-00026" summary="package lock and package.json files">
+      <option name="closed" value="true" />
+      <created>1743518912937</created>
+      <option name="number" value="00026" />
+      <option name="presentableId" value="LOCAL-00026" />
+      <option name="project" value="LOCAL" />
+      <updated>1743518912937</updated>
+    </task>
+    <task id="LOCAL-00027" summary="Deleted employee form seperated into edit and add components">
+      <option name="closed" value="true" />
+      <created>1743528608913</created>
+      <option name="number" value="00027" />
+      <option name="presentableId" value="LOCAL-00027" />
+      <option name="project" value="LOCAL" />
+      <updated>1743528608913</updated>
+    </task>
+    <task id="LOCAL-00028" summary="Updated resolver so that view model works">
+      <option name="closed" value="true" />
+      <created>1743531440382</created>
+      <option name="number" value="00028" />
+      <option name="presentableId" value="LOCAL-00028" />
+      <option name="project" value="LOCAL" />
+      <updated>1743531440382</updated>
+    </task>
+    <task id="LOCAL-00029" summary="Seperated edit page to here">
+      <option name="closed" value="true" />
+      <created>1743537969052</created>
+      <option name="number" value="00029" />
+      <option name="presentableId" value="LOCAL-00029" />
+      <option name="project" value="LOCAL" />
+      <updated>1743537969052</updated>
+    </task>
+    <task id="LOCAL-00030" summary="Added extra fields in searchEmployeeByDesignationOrDepartment">
+      <option name="closed" value="true" />
+      <created>1743538017576</created>
+      <option name="number" value="00030" />
+      <option name="presentableId" value="LOCAL-00030" />
+      <option name="project" value="LOCAL" />
+      <updated>1743538017577</updated>
+    </task>
+    <task id="LOCAL-00031" summary="Edited routes for new edit and add components">
+      <option name="closed" value="true" />
+      <created>1743538040654</created>
+      <option name="number" value="00031" />
+      <option name="presentableId" value="LOCAL-00031" />
+      <option name="project" value="LOCAL" />
+      <updated>1743538040654</updated>
+    </task>
+    <task id="LOCAL-00032" summary="Commented out title">
+      <option name="closed" value="true" />
+      <created>1743538053746</created>
+      <option name="number" value="00032" />
+      <option name="presentableId" value="LOCAL-00032" />
+      <option name="project" value="LOCAL" />
+      <updated>1743538053746</updated>
+    </task>
+    <option name="localTasksCounter" value="33" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Employee Model" />
-    <MESSAGE value="User Model" />
-    <MESSAGE value="Updated added .env" />
-    <MESSAGE value="Added resolvers.js" />
-    <MESSAGE value="Package lock and package.json" />
-    <MESSAGE value="JWT" />
-    <MESSAGE value="typeDefs" />
+    <ignored-roots>
+      <path value="$PROJECT_DIR$/backend" />
+    </ignored-roots>
     <MESSAGE value="Server.js filer" />
     <MESSAGE value="Cleaned up the code" />
     <MESSAGE value="Updated readme file" />
-    <option name="LAST_COMMIT_MESSAGE" value="Updated readme file" />
+    <MESSAGE value="Updated backend code to handle login and singup error messages" />
+    <MESSAGE value="Auth guard for authentication" />
+    <MESSAGE value="Auth frontend logic" />
+    <MESSAGE value="Signup page" />
+    <MESSAGE value="Login page" />
+    <MESSAGE value="Employee Table List" />
+    <MESSAGE value="Employee Add/Edit Form" />
+    <MESSAGE value="gitignore file" />
+    <MESSAGE value="Employee Service" />
+    <MESSAGE value="Updated package-lock.json" />
+    <MESSAGE value="routes frontend" />
+    <MESSAGE value="Config file" />
+    <MESSAGE value=".gitignore file" />
+    <MESSAGE value="angular.json" />
+    <MESSAGE value="App Files" />
+    <MESSAGE value="package lock and package.json files" />
+    <MESSAGE value="Deleted employee form seperated into edit and add components" />
+    <MESSAGE value="Updated resolver so that view model works" />
+    <MESSAGE value="Seperated edit page to here" />
+    <MESSAGE value="Added extra fields in searchEmployeeByDesignationOrDepartment" />
+    <MESSAGE value="Edited routes for new edit and add components" />
+    <MESSAGE value="Commented out title" />
+    <option name="LAST_COMMIT_MESSAGE" value="Commented out title" />
   </component>
 </project>

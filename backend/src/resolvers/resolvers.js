@@ -1,11 +1,15 @@
+const { GraphQLUpload } = require('graphql-upload');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const fs = require('fs');
+const path = require('path');
 const User = require('../models/User');
 const Employee = require('../models/Employee');
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret';
 
 const resolvers = {
+    Upload: GraphQLUpload,
     Query: {
         // Login Query: validate user credentials and return JWT token
         login: async (_, { usernameOrEmail, password }) => {
@@ -59,7 +63,6 @@ const resolvers = {
                     throw new Error('Email already in use');
                 }
             }
-            // Hash password before saving
             const hashedPassword = await bcrypt.hash(password, 10);
             const user = new User({ username, email, password: hashedPassword });
             await user.save();
@@ -93,14 +96,29 @@ const resolvers = {
                 throw new Error('Employee not found');
             }
             return employee;
+        },
+
+        // File upload mutation for profile picture
+        uploadProfilePicture: async (_, { file }) => {
+            const { createReadStream, filename } = await file;
+            const uniqueFilename = `${Date.now()}-${filename}`;
+            const filepath = path.join(__dirname, '../../uploads', uniqueFilename);
+
+            await new Promise((resolve, reject) => {
+                createReadStream()
+                    .pipe(fs.createWriteStream(filepath))
+                    .on('finish', resolve)
+                    .on('error', reject);
+            });
+
+            // Return a URL (adjust the URL as needed)
+            return `http://localhost:3000/uploads/${uniqueFilename}`;
         }
     },
-    // Custom field resolvers to format date fields and id
     Employee: {
         id: (parent) => parent._id.toString(),
         created_at: (parent) => parent.created_at ? parent.created_at.toISOString() : null,
         updated_at: (parent) => parent.updated_at ? parent.updated_at.toISOString() : null,
-        // Added this line to see date of joining in view model
         date_of_joining: (parent) => {
             if (!parent.date_of_joining) return null;
             return parent.date_of_joining.toISOString();

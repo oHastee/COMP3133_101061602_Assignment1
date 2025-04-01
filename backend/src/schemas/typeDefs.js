@@ -1,6 +1,8 @@
 const { gql } = require('apollo-server-express');
 
 const typeDefs = gql`
+  scalar Upload
+
   type User {
     id: ID!
     username: String!
@@ -62,6 +64,9 @@ const typeDefs = gql`
       employee_photo: String
     ): Employee
     deleteEmployee(id: ID!): Employee
+
+    # Mutation to handle file uploads
+    uploadProfilePicture(file: Upload!): String!
   }
 `;
 
