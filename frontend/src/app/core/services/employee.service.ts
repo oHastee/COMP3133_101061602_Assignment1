@@ -58,6 +58,8 @@ export class EmployeeService {
   }
 
   // 3. Search employees by designation or department
+// Updated searchEmployeeByDesignationOrDepartment in EmployeeService
+
   searchEmployeeByDesignationOrDepartment(designation?: string, department?: string): Observable<any> {
     return this.apollo.watchQuery({
       query: gql`
@@ -66,8 +68,13 @@ export class EmployeeService {
             id
             first_name
             last_name
+            email
+            gender
             designation
+            salary
+            date_of_joining
             department
+            employee_photo
           }
         }
       `,
