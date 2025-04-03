@@ -1,0 +1,23 @@
+<!-- src/app/shared/components/page-header/page-header.component.html -->
+<div class="page-header">
+  <div class="container">
+    <div class="page-header-content">
+      <!-- Back Link -->
+      <div *ngIf="backLink" class="back-link-container">
+        <a [routerLink]="backLink" class="back-link">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+          </svg>
+          {{ backText }}
+        </a>
+      </div>
+
+      <!-- Title and Subtitle -->
+      <div class="title-container">
+        <h1 class="page-title">{{ title }}</h1>
+        <p *ngIf="subtitle" class="page-subtitle">{{ subtitle }}</p>
+      </div>
+    </div>
+  </div>
+</div>
