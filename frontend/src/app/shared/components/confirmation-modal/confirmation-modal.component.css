@@ -1,0 +1,113 @@
+/* src/app/shared/components/confirmation-modal/confirmation-modal.component.css */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: var(--z-index-modal);
+  padding: var(--space-4);
+}
+
+.modal-container {
+  background-color: var(--surface-color);
+  border-radius: var(--radius-lg);
+  width: 100%;
+  max-width: 450px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: var(--shadow-xl);
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  padding: var(--space-4) var(--space-6);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.modal-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: var(--space-4);
+  flex-shrink: 0;
+}
+
+.modal-icon-danger {
+  color: var(--danger-color);
+  background-color: var(--danger-color-light);
+}
+
+.modal-icon-warning {
+  color: var(--warning-color);
+  background-color: var(--warning-color-light);
+}
+
+.modal-icon-info {
+  color: var(--info-color);
+  background-color: var(--info-color-light);
+}
+
+.modal-title {
+  flex: 1;
+  margin: 0;
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-color);
+}
+
+.modal-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+  color: var(--text-color-light);
+  transition: all var(--transition-fast) var(--transition-ease);
+}
+
+.modal-close:hover {
+  background-color: var(--gray-100);
+  color: var(--text-color);
+}
+
+.modal-body {
+  padding: var(--space-6);
+}
+
+.modal-message {
+  margin: 0;
+  font-size: var(--font-size-base);
+  color: var(--text-color);
+  line-height: var(--line-height-relaxed);
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  padding: var(--space-4) var(--space-6);
+  border-top: 1px solid var(--border-color);
+  gap: var(--space-3);
+}
+
+@media (max-width: 480px) {
+  .modal-footer {
+    flex-direction: column-reverse;
+  }
+
+  .modal-footer .btn {
+    width: 100%;
+  }
+}
