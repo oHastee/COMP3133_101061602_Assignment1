@@ -1,7 +1,8 @@
-// frontend/src/app/auth/login/login.component.ts
-import { Component } from '@angular/core';
+// src/app/auth/login/login.component.ts
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
+import { trigger, transition, style, animate } from '@angular/animations';
 import { AuthService } from '../../core/services/auth.service';
 import { CommonModule } from '@angular/common';
 
@@ -9,47 +10,29 @@ import { CommonModule } from '@angular/common';
   selector: 'app-login',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, RouterModule],
-  template: `
-    <div class="login-container">
-      <h2>Login</h2>
-      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-        <div class="form-group">
-          <label>Username or Email</label>
-          <input type="text" formControlName="usernameOrEmail" class="form-control" />
-          <div *ngIf="loginForm.get('usernameOrEmail')?.invalid && loginForm.get('usernameOrEmail')?.touched" class="text-danger">
-            Please enter your username or email.
-          </div>
-        </div>
-        <div class="form-group">
-          <label>Password</label>
-          <input type="password" formControlName="password" class="form-control" />
-          <div *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched" class="text-danger">
-            Password is required.
-          </div>
-        </div>
-        <button type="submit" class="btn btn-primary" [disabled]="loginForm.invalid">Login</button>
-      </form>
-      <div *ngIf="errorMessage" class="alert alert-danger mt-2">
-        {{ errorMessage }}
-      </div>
-      <p>Don't have an account? <a routerLink="/signup">Sign up here</a></p>
-    </div>
-  `,
-  styles: [`
-    .login-container {
-      max-width: 400px;
-      margin: 2rem auto;
-      padding: 1rem;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-    }
-    .form-group { margin-bottom: 1rem; }
-    .alert { margin-top: 1rem; }
-  `]
+  templateUrl: './login.component.html',
+  styleUrls: ['./login.component.css'],
+  animations: [
+    trigger('fadeInUp', [
+      transition(':enter', [
+        style({ opacity: 0, transform: 'translateY(20px)' }),
+        animate('300ms ease-out', style({ opacity: 1, transform: 'translateY(0)' }))
+      ])
+    ]),
+    trigger('fadeIn', [
+      transition(':enter', [
+        style({ opacity: 0 }),
+        animate('400ms ease-out', style({ opacity: 1 }))
+      ])
+    ])
+  ]
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
   loginForm: FormGroup;
   errorMessage: string = '';
+  isLoading: boolean = false;
+  showPassword: boolean = false;
+  year: number = new Date().getFullYear();
 
   constructor(
     private fb: FormBuilder,
@@ -57,20 +40,44 @@ export class LoginComponent {
     private router: Router
   ) {
     this.loginForm = this.fb.group({
-      usernameOrEmail: ['', Validators.required],
-      password: ['', Validators.required]
+      usernameOrEmail: ['', [Validators.required]],
+      password: ['', [Validators.required]],
+      rememberMe: [false]
     });
+  }
+
+  ngOnInit(): void {
+    // Check if we're already logged in
+    if (this.authService.isLoggedIn()) {
+      this.router.navigate(['/employees']);
+    }
   }
 
   onSubmit(): void {
     if (this.loginForm.valid) {
+      this.isLoading = true;
       this.errorMessage = ''; // Reset any previous error
-      this.authService.login(this.loginForm.value).subscribe({
+
+      const credentials = {
+        usernameOrEmail: this.loginForm.value.usernameOrEmail,
+        password: this.loginForm.value.password
+      };
+
+      this.authService.login(credentials).subscribe({
         next: (res: any) => {
-          localStorage.setItem('token', res.data.login.token);
+          const token = res.data.login.token;
+          localStorage.setItem('token', token);
+
+          // If "remember me" is checked, store the preference
+          if (this.loginForm.value.rememberMe) {
+            localStorage.setItem('remember_user', 'true');
+          }
+
           this.router.navigate(['/employees']);
         },
         error: (err: any) => {
+          this.isLoading = false;
+
           // Retrieve error message from graphQLErrors if available; otherwise use err.message
           const errorMsg =
             err.graphQLErrors && err.graphQLErrors.length
@@ -87,6 +94,22 @@ export class LoginComponent {
           console.error('Login error:', err);
         }
       });
+    } else {
+      // Mark all fields as touched to trigger validation messages
+      Object.keys(this.loginForm.controls).forEach(key => {
+        const control = this.loginForm.get(key);
+        control?.markAsTouched();
+      });
     }
+  }
+
+  togglePasswordVisibility(): void {
+    this.showPassword = !this.showPassword;
+  }
+
+  // Helper method to check for specific form control errors
+  hasError(controlName: string, errorName: string): boolean {
+    const control = this.loginForm.get(controlName);
+    return !!(control && control.touched && control.hasError(errorName));
   }
 }
