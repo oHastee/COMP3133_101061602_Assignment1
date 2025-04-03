@@ -1,16 +1,15 @@
-// frontend/src/app/app.component.ts
+// src/app/app.component.ts
 import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterModule],
-  template: `
-    <!--<h1>Hello, {{ title }}</h1>-->
-    <router-outlet></router-outlet>
-  `
+  imports: [CommonModule, RouterModule],
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  //title = '101061602_comp3133_assignment2';
+  title = 'Employee Management System';
 }
