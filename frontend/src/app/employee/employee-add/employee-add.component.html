@@ -1,0 +1,295 @@
+<!-- src/app/employee/employee-add/employee-add.component.html -->
+<app-navbar></app-navbar>
+
+<main class="main-content">
+  <!-- Page Header -->
+  <app-page-header
+    title="Add Employee"
+    subtitle="Create a new employee record"
+    backLink="/employees"
+    backText="Back to Employees"
+  ></app-page-header>
+
+  <div class="container">
+    <!-- Alert Messages -->
+    <app-alert
+      *ngIf="errorMessage"
+      type="danger"
+      [message]="errorMessage"
+      (close)="errorMessage = ''"
+      @fadeIn
+    ></app-alert>
+
+    <app-alert
+      *ngIf="successMessage"
+      type="success"
+      [message]="successMessage"
+      (close)="successMessage = ''"
+      @fadeIn
+    ></app-alert>
+
+    <!-- Employee Form Card -->
+    <div class="form-card" @fadeIn>
+      <form [formGroup]="employeeForm" (ngSubmit)="onSubmit()" class="employee-form">
+        <!-- Form sections -->
+        <div class="form-section">
+          <h3 class="section-title">Personal Information</h3>
+
+          <div class="form-row">
+            <!-- First Name -->
+            <div class="form-group">
+              <label for="first_name">First Name <span class="required">*</span></label>
+              <div class="input-with-icon">
+                <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+                <input
+                  type="text"
+                  id="first_name"
+                  formControlName="first_name"
+                  class="form-control"
+                  [ngClass]="{'is-invalid': hasError('first_name', 'required') || hasError('first_name', 'minlength') || hasError('first_name', 'maxlength')}"
+                  placeholder="Enter first name"
+                  autocomplete="given-name"
+                />
+              </div>
+              <div class="invalid-feedback" *ngIf="hasError('first_name', 'required') || hasError('first_name', 'minlength') || hasError('first_name', 'maxlength')">
+                {{ getErrorMessage('first_name') }}
+              </div>
+            </div>
+
+            <!-- Last Name -->
+            <div class="form-group">
+              <label for="last_name">Last Name <span class="required">*</span></label>
+              <div class="input-with-icon">
+                <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+                <input
+                  type="text"
+                  id="last_name"
+                  formControlName="last_name"
+                  class="form-control"
+                  [ngClass]="{'is-invalid': hasError('last_name', 'required') || hasError('last_name', 'minlength') || hasError('last_name', 'maxlength')}"
+                  placeholder="Enter last name"
+                  autocomplete="family-name"
+                />
+              </div>
+              <div class="invalid-feedback" *ngIf="hasError('last_name', 'required') || hasError('last_name', 'minlength') || hasError('last_name', 'maxlength')">
+                {{ getErrorMessage('last_name') }}
+              </div>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <!-- Email (optional) -->
+            <div class="form-group">
+              <label for="email">Email (optional)</label>
+              <div class="input-with-icon">
+                <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                  <polyline points="22,6 12,13 2,6"></polyline>
+                </svg>
+                <input
+                  type="email"
+                  id="email"
+                  formControlName="email"
+                  class="form-control"
+                  [ngClass]="{'is-invalid': hasError('email', 'email')}"
+                  placeholder="Enter email address"
+                  autocomplete="email"
+                />
+              </div>
+              <div class="invalid-feedback" *ngIf="hasError('email', 'email')">
+                {{ getErrorMessage('email') }}
+              </div>
+            </div>
+
+            <!-- Gender (optional) -->
+            <div class="form-group">
+              <label for="gender">Gender (optional)</label>
+              <div class="input-with-icon">
+                <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <path d="M8 14s1.5 2 4 2 4-2 4-2"></path>
+                  <line x1="9" y1="9" x2="9.01" y2="9"></line>
+                  <line x1="15" y1="9" x2="15.01" y2="9"></line>
+                </svg>
+                <select
+                  id="gender"
+                  formControlName="gender"
+                  class="form-control"
+                >
+                  <option value="">Select Gender</option>
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <h3 class="section-title">Employment Details</h3>
+
+          <div class="form-row">
+            <!-- Designation -->
+            <div class="form-group">
+              <label for="designation">Designation <span class="required">*</span></label>
+              <div class="input-with-icon">
+                <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                  <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                  <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                </svg>
+                <input
+                  type="text"
+                  id="designation"
+                  formControlName="designation"
+                  class="form-control"
+                  [ngClass]="{'is-invalid': hasError('designation', 'required') || hasError('designation', 'minlength') || hasError('designation', 'maxlength')}"
+                  placeholder="Enter designation"
+                />
+              </div>
+              <div class="invalid-feedback" *ngIf="hasError('designation', 'required') || hasError('designation', 'minlength') || hasError('designation', 'maxlength')">
+                {{ getErrorMessage('designation') }}
+              </div>
+            </div>
+
+            <!-- Department -->
+            <div class="form-group">
+              <label for="department">Department <span class="required">*</span></label>
+              <div class="input-with-icon">
+                <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                  <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+                </svg>
+                <input
+                  type="text"
+                  id="department"
+                  formControlName="department"
+                  class="form-control"
+                  [ngClass]="{'is-invalid': hasError('department', 'required') || hasError('department', 'minlength') || hasError('department', 'maxlength')}"
+                  placeholder="Enter department"
+                />
+              </div>
+              <div class="invalid-feedback" *ngIf="hasError('department', 'required') || hasError('department', 'minlength') || hasError('department', 'maxlength')">
+                {{ getErrorMessage('department') }}
+              </div>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <!-- Salary -->
+            <div class="form-group">
+              <label for="salary">Salary <span class="required">*</span></label>
+              <div class="input-with-icon">
+                <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="12" y1="1" x2="12" y2="23"></line>
+                  <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                </svg>
+                <input
+                  type="number"
+                  id="salary"
+                  formControlName="salary"
+                  class="form-control"
+                  [ngClass]="{'is-invalid': hasError('salary', 'required') || hasError('salary', 'min') || hasError('salary', 'max')}"
+                  placeholder="Enter salary"
+                  step="0.01"
+                />
+              </div>
+              <div class="invalid-feedback" *ngIf="hasError('salary', 'required') || hasError('salary', 'min') || hasError('salary', 'max')">
+                {{ getErrorMessage('salary') }}
+              </div>
+            </div>
+
+            <!-- Date of Joining -->
+            <div class="form-group">
+              <label for="date_of_joining">Date of Joining <span class="required">*</span></label>
+              <div class="input-with-icon">
+                <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                  <line x1="16" y1="2" x2="16" y2="6"></line>
+                  <line x1="8" y1="2" x2="8" y2="6"></line>
+                  <line x1="3" y1="10" x2="21" y2="10"></line>
+                </svg>
+                <input
+                  type="date"
+                  id="date_of_joining"
+                  formControlName="date_of_joining"
+                  class="form-control"
+                  [ngClass]="{'is-invalid': hasError('date_of_joining', 'required')}"
+                />
+              </div>
+              <div class="invalid-feedback" *ngIf="hasError('date_of_joining', 'required')">
+                {{ getErrorMessage('date_of_joining') }}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <h3 class="section-title">Profile Picture</h3>
+
+          <div class="form-row">
+            <div class="form-group profile-upload-group">
+              <div class="profile-preview-container">
+                <div class="profile-preview" *ngIf="imagePreviewUrl">
+                  <img [src]="imagePreviewUrl" alt="Profile Preview" />
+                </div>
+                <div class="profile-placeholder" *ngIf="!imagePreviewUrl">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                  </svg>
+                  <p>No image selected</p>
+                </div>
+              </div>
+
+              <div class="upload-controls">
+                <label for="profile-upload" class="upload-label">Upload Profile Picture (optional)</label>
+                <div class="file-input-container">
+                  <input
+                    type="file"
+                    id="profile-upload"
+                    class="file-input"
+                    accept="image/*"
+                    (change)="onFileSelected($event)"
+                  />
+                  <label for="profile-upload" class="file-input-button">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                      <polyline points="17 8 12 3 7 8"></polyline>
+                      <line x1="12" y1="3" x2="12" y2="15"></line>
+                    </svg>
+                    Choose File
+                  </label>
+                  <span class="file-name">{{ selectedFile ? selectedFile.name : 'No file chosen' }}</span>
+                </div>
+                <p class="file-hint">Recommended size: 300x300 pixels, max 2MB</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Form actions -->
+        <div class="form-actions">
+          <button type="button" routerLink="/employees" class="btn btn-secondary">
+            Cancel
+          </button>
+          <button
+            type="submit"
+            class="btn btn-primary"
+            [disabled]="employeeForm.invalid || isLoading"
+          >
+            <span *ngIf="isLoading" class="spinner spinner-sm mr-2"></span>
+            {{ isLoading ? 'Saving...' : 'Save Employee' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</main>

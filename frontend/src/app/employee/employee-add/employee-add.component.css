@@ -1,0 +1,239 @@
+/* src/app/employee/employee-add/employee-add.component.css */
+.main-content {
+  min-height: calc(100vh - 60px);
+  background-color: var(--background-color);
+}
+
+.form-card {
+  background-color: var(--surface-color);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  margin-bottom: var(--space-8);
+  overflow: hidden;
+  transition: box-shadow var(--transition-normal) var(--transition-ease);
+}
+
+.employee-form {
+  padding: var(--space-6);
+}
+
+.form-section {
+  margin-bottom: var(--space-6);
+  padding-bottom: var(--space-6);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.form-section:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.section-title {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-color);
+  margin-bottom: var(--space-4);
+}
+
+.form-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  margin-bottom: var(--space-4);
+}
+
+.form-row:last-child {
+  margin-bottom: 0;
+}
+
+.form-group {
+  flex: 1;
+  min-width: 250px;
+}
+
+.input-with-icon {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-icon {
+  position: absolute;
+  left: var(--space-3);
+  color: var(--text-color-light);
+}
+
+.form-control {
+  padding-left: var(--space-10);
+}
+
+.form-control:disabled {
+  background-color: var(--gray-100);
+  cursor: not-allowed;
+}
+
+.required {
+  color: var(--danger-color);
+  margin-left: var(--space-1);
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-4);
+  margin-top: var(--space-6);
+}
+
+/* Profile upload styles */
+.profile-upload-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+@media (min-width: 768px) {
+  .profile-upload-group {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+}
+
+.profile-preview-container {
+  flex-shrink: 0;
+  width: 150px;
+  height: 150px;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background-color: var(--gray-100);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px dashed var(--border-color);
+}
+
+.profile-preview {
+  width: 100%;
+  height: 100%;
+}
+
+.profile-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.profile-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-color-light);
+  padding: var(--space-4);
+  text-align: center;
+}
+
+.profile-placeholder svg {
+  color: var(--gray-400);
+  margin-bottom: var(--space-2);
+}
+
+.profile-placeholder p {
+  font-size: var(--font-size-sm);
+  margin-bottom: 0;
+}
+
+.upload-controls {
+  flex: 1;
+}
+
+.file-input-container {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+}
+
+.file-input {
+  width: 0.1px;
+  height: 0.1px;
+  opacity: 0;
+  overflow: hidden;
+  position: absolute;
+  z-index: -1;
+}
+
+.file-input-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  font-size: var(--font-size-sm);
+  color: var(--surface-color);
+  background-color: var(--primary-color);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: background-color var(--transition-fast) var(--transition-ease);
+}
+
+.file-input-button:hover {
+  background-color: var(--primary-color-dark);
+}
+
+.file-name {
+  font-size: var(--font-size-sm);
+  color: var(--text-color-light);
+}
+
+.file-hint {
+  font-size: var(--font-size-xs);
+  color: var(--text-color-light);
+  margin-top: var(--space-1);
+}
+
+/* Loading container */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-16) 0;
+  color: var(--text-color-light);
+}
+
+.loading-container .spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  border-radius: 50%;
+  border-top-color: var(--primary-color);
+  animation: spinner 1s ease-in-out infinite;
+  margin-bottom: var(--space-4);
+}
+
+@keyframes spinner {
+  to { transform: rotate(360deg); }
+}
+
+/* Responsive styles */
+@media (max-width: 767px) {
+  .form-row {
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+
+  .form-group {
+    width: 100%;
+  }
+
+  .form-actions {
+    flex-direction: column-reverse;
+    gap: var(--space-3);
+  }
+
+  .form-actions .btn {
+    width: 100%;
+  }
+}
