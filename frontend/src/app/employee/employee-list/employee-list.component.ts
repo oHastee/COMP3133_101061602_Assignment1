@@ -1,140 +1,249 @@
-import { Component, OnInit } from '@angular/core';
+// src/app/employee/employee-list/employee-list.component.ts
+import { Component, OnInit, OnDestroy, HostListener, ElementRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterModule, NavigationEnd } from '@angular/router';
-import { filter } from 'rxjs/operators';
+import { Router, RouterModule } from '@angular/router';
+import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { EmployeeService } from '../../core/services/employee.service';
-import { EmployeeDetailsComponent } from '../employee-details/employee-details.component';
-import { AuthService } from '../../core/services/auth.service';
+import { NavbarComponent } from '../../shared/components/navbar/navbar.component';
+import { AlertComponent } from '../../shared/components/alert/alert.component';
+import { PageHeaderComponent } from '../../shared/components/page-header/page-header.component';
+import { trigger, transition, style, animate, query, stagger } from '@angular/animations';
+import { Subscription } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 @Component({
   selector: 'app-employee-list',
   standalone: true,
-  imports: [CommonModule, RouterModule, EmployeeDetailsComponent],
-  template: `
-    <div class="container">
-      <div class="d-flex justify-content-between align-items-center my-3">
-        <h2 class="mb-0">Employee List</h2>
-        <!-- Logout Button -->
-        <button class="btn btn-secondary" (click)="logout()">Logout</button>
-      </div>
-
-      <!-- Add Employee Button -->
-      <div class="mb-3">
-        <button class="btn btn-primary" [routerLink]="['/employee/add']">
-          + Add Employee
-        </button>
-      </div>
-
-      <!-- Search Buttons -->
-      <div class="btn-group mb-3">
-        <button class="btn btn-secondary" (click)="onLoadAllEmployees()">Load All Employees</button>
-        <button class="btn btn-secondary" (click)="onSearch('Engineer', '')">Search by Designation</button>
-        <button class="btn btn-secondary" (click)="onSearch('', 'HR')">Search by Department</button>
-      </div>
-
-      <!-- Employees Table -->
-      <table class="table table-bordered table-striped" *ngIf="employees.length">
-        <thead class="thead-dark">
-        <tr>
-          <th>Id</th>
-          <th>First Name</th>
-          <th>Last Name</th>
-          <th>Designation</th>
-          <th>Department</th>
-          <th style="min-width: 240px;">Actions</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr *ngFor="let emp of employees">
-          <td>{{ emp.id }}</td>
-          <td>{{ emp.first_name }}</td>
-          <td>{{ emp.last_name }}</td>
-          <td>{{ emp.designation }}</td>
-          <td>{{ emp.department }}</td>
-          <td>
-            <!-- View Details -->
-            <button class="btn btn-info btn-sm" (click)="viewDetails(emp)">
-              View
-            </button>
-            <!-- Edit Employee -->
-            <button class="btn btn-warning btn-sm" [routerLink]="['/employee/edit', emp.id]">
-              Edit
-            </button>
-            <!-- Delete Employee -->
-            <button class="btn btn-danger btn-sm" (click)="onDelete(emp.id)">
-              Delete
-            </button>
-          </td>
-        </tr>
-        </tbody>
-      </table>
-
-      <!-- Employee Details Modal -->
-      <app-employee-details
-        *ngIf="selectedEmployee"
-        [employee]="selectedEmployee"
-        (close)="closeDetails()"
-      ></app-employee-details>
-    </div>
-  `,
+  imports: [
+    CommonModule,
+    RouterModule,
+    ReactiveFormsModule,
+    NavbarComponent,
+    AlertComponent,
+    PageHeaderComponent
+  ],
+  templateUrl: './employee-list.component.html',
+  styleUrls: ['./employee-list.component.css'],
+  animations: [
+    trigger('fadeIn', [
+      transition(':enter', [
+        style({ opacity: 0 }),
+        animate('300ms ease-out', style({ opacity: 1 }))
+      ])
+    ]),
+    trigger('listAnimation', [
+      transition('* => *', [
+        query(':enter', [
+          style({ opacity: 0, transform: 'translateY(15px)' }),
+          stagger(60, [
+            animate('300ms ease-out', style({ opacity: 1, transform: 'translateY(0)' }))
+          ])
+        ], { optional: true })
+      ])
+    ])
+  ]
 })
-export class EmployeeListComponent implements OnInit {
+export class EmployeeListComponent implements OnInit, OnDestroy {
+  @ViewChild('designationSelect', { static: false }) designationSelect?: ElementRef;
+  @ViewChild('departmentSelect', { static: false }) departmentSelect?: ElementRef;
+
   employees: any[] = [];
+  filteredEmployees: any[] = [];
   selectedEmployee: any = null;
+  isLoading: boolean = true;
+  errorMessage: string = '';
+  successMessage: string = '';
+  searchForm: FormGroup;
+  formSubscription: Subscription | null = null;
+
+  // Dynamic options for dropdowns
+  designationOptions: string[] = [];
+  departmentOptions: string[] = [];
 
   constructor(
     private employeeService: EmployeeService,
-    private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private fb: FormBuilder,
+    private el: ElementRef
   ) {
-    // Refresh the employee list when navigating to /employees
-    this.router.events
-      .pipe(filter(event => event instanceof NavigationEnd))
-      .subscribe((event: NavigationEnd) => {
-        if (event.urlAfterRedirects === '/employees') {
-          this.onLoadAllEmployees();
-        }
-      });
-  }
-
-  ngOnInit(): void {
-    this.onLoadAllEmployees();
-  }
-
-  onLoadAllEmployees(): void {
-    this.employeeService.getAllEmployees().subscribe((res: any) => {
-      this.employees = res.data.getAllEmployees;
+    this.searchForm = this.fb.group({
+      designation: [''],
+      department: [''],
     });
   }
 
-  onSearch(designation: string, department: string): void {
-    this.employeeService
-      .searchEmployeeByDesignationOrDepartment(designation, department)
-      .subscribe((res: any) => {
-        this.employees = res.data.searchEmployeeByDesignationOrDepartment;
+  ngOnInit(): void {
+    this.loadEmployees();
+
+    // Set up form value changes listener with debounce and distinct check
+    this.formSubscription = this.searchForm.valueChanges
+      .pipe(
+        debounceTime(300),
+        distinctUntilChanged((a, b) =>
+          JSON.stringify(a) === JSON.stringify(b)
+        )
+      )
+      .subscribe(() => {
+        this.applyFilters();
       });
   }
 
-  viewDetails(emp: any): void {
-    console.log('[DEBUG] Employee to view:', emp);
-    this.selectedEmployee = emp;
+  ngOnDestroy(): void {
+    // Clean up subscription
+    if (this.formSubscription) {
+      this.formSubscription.unsubscribe();
+    }
   }
 
-  closeDetails(): void {
-    this.selectedEmployee = null;
+  // Close dropdowns when clicking outside
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    const target = event.target as HTMLElement;
+    const designationContainer = this.el.nativeElement.querySelector('.designation-dropdown-container');
+    const departmentContainer = this.el.nativeElement.querySelector('.department-dropdown-container');
+
+    // Close designation dropdown if clicked outside
+    if (designationContainer && !designationContainer.contains(target)) {
+      this.designationSelect?.nativeElement.blur();
+    }
+
+    // Close department dropdown if clicked outside
+    if (departmentContainer && !departmentContainer.contains(target)) {
+      this.departmentSelect?.nativeElement.blur();
+    }
   }
 
-  onDelete(id: string): void {
-    this.employeeService.deleteEmployee(id).subscribe(() => {
-      this.employees = this.employees.filter(emp => emp.id !== id);
-      if (this.selectedEmployee && this.selectedEmployee.id === id) {
-        this.closeDetails();
+  loadEmployees(): void {
+    this.isLoading = true;
+    this.errorMessage = '';
+    this.successMessage = '';
+
+    this.employeeService.getAllEmployees().subscribe({
+      next: (res: any) => {
+        this.employees = res.data.getAllEmployees;
+        this.filteredEmployees = [...this.employees];
+        this.isLoading = false;
+
+        // Extract unique designations and departments
+        this.extractFilterOptions();
+      },
+      error: (err: any) => {
+        console.error('Error loading employees:', err);
+        this.errorMessage = 'Failed to load employees. Please try again.';
+        this.isLoading = false;
       }
     });
   }
 
-  logout(): void {
-    this.authService.logout();
-    this.router.navigate(['/login']);
+  // Extract unique values for filter dropdowns
+  extractFilterOptions(): void {
+    // Get unique designations
+    const designations = new Set<string>();
+    // Get unique departments
+    const departments = new Set<string>();
+
+    this.employees.forEach(emp => {
+      if (emp.designation) designations.add(emp.designation);
+      if (emp.department) departments.add(emp.department);
+    });
+
+    this.designationOptions = Array.from(designations).sort();
+    this.departmentOptions = Array.from(departments).sort();
+  }
+
+  applyFilters(): void {
+    const { designation, department } = this.searchForm.value;
+
+    if (!designation && !department) {
+      // No filters applied
+      this.filteredEmployees = [...this.employees];
+      return;
+    }
+
+    // Apply filters on client side first (for better UX)
+    this.filteredEmployees = this.employees.filter(emp => {
+      const matchDesignation = !designation || emp.designation === designation;
+      const matchDepartment = !department || emp.department === department;
+      return matchDesignation && matchDepartment;
+    });
+
+    // Then fetch from server for accurate results
+    this.fetchFilteredEmployees(designation, department);
+  }
+
+  fetchFilteredEmployees(designation: string, department: string): void {
+    // Skip API call if both filters are empty
+    if (!designation && !department) return;
+
+    this.isLoading = true;
+
+    this.employeeService.searchEmployeeByDesignationOrDepartment(designation, department).subscribe({
+      next: (res: any) => {
+        this.filteredEmployees = res.data.searchEmployeeByDesignationOrDepartment;
+        this.isLoading = false;
+      },
+      error: (err: any) => {
+        console.error('Error searching employees:', err);
+        this.errorMessage = 'Failed to search employees. Please try again.';
+        this.isLoading = false;
+      }
+    });
+  }
+
+  // Clear all filters
+  clearFilters(): void {
+    this.searchForm.patchValue({
+      designation: '',
+      department: ''
+    }, { emitEvent: false });
+
+    this.filteredEmployees = [...this.employees];
+  }
+
+  viewEmployee(employee: any): void {
+    this.selectedEmployee = employee;
+  }
+
+  closeEmployeeDetails(): void {
+    this.selectedEmployee = null;
+  }
+
+  deleteEmployee(id: string, event: Event): void {
+    event.stopPropagation(); // Prevent row click
+
+    if (!confirm('Are you sure you want to delete this employee?')) {
+      return;
+    }
+
+    this.employeeService.deleteEmployee(id).subscribe({
+      next: () => {
+        this.successMessage = 'Employee deleted successfully';
+        this.loadEmployees(); // Refresh the list
+
+        // Close details if the deleted employee is being viewed
+        if (this.selectedEmployee && this.selectedEmployee.id === id) {
+          this.selectedEmployee = null;
+        }
+
+        // Clear success message after 3 seconds
+        setTimeout(() => this.successMessage = '', 3000);
+      },
+      error: (err: any) => {
+        console.error('Error deleting employee:', err);
+        this.errorMessage = 'Failed to delete employee. Please try again.';
+      }
+    });
+  }
+
+  // Format date to display in a readable format
+  formatDate(dateString: string): string {
+    if (!dateString) return 'N/A';
+
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    });
   }
 }

@@ -1,0 +1,222 @@
+<!-- src/app/employee/employee-list/employee-list.component.html -->
+<app-navbar></app-navbar>
+
+<main class="main-content">
+  <!-- Page Header -->
+  <app-page-header
+    title="Employees"
+    subtitle="Manage your employees and team members"
+  ></app-page-header>
+
+  <div class="container">
+    <!-- Alert Messages -->
+    <app-alert
+      *ngIf="errorMessage"
+      type="danger"
+      [message]="errorMessage"
+      (close)="errorMessage = ''"
+      @fadeIn
+    ></app-alert>
+
+    <app-alert
+      *ngIf="successMessage"
+      type="success"
+      [message]="successMessage"
+      (close)="successMessage = ''"
+      @fadeIn
+    ></app-alert>
+
+    <!-- Action Bar -->
+    <div class="action-bar" @fadeIn>
+      <div class="action-buttons">
+        <a routerLink="/employee/add" class="btn btn-primary">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+          Add Employee
+        </a>
+      </div>
+
+      <div class="search-filters">
+        <form [formGroup]="searchForm" class="filter-form">
+          <div class="filter-label">Filter by:</div>
+
+          <div class="filter-section">
+            <!-- Designation Filter -->
+            <div class="filter-dropdown-container designation-dropdown-container">
+              <select
+                #designationSelect
+                formControlName="designation"
+                class="filter-select"
+              >
+                <option value="" disabled>Designation</option>
+                <option *ngFor="let option of designationOptions" [value]="option">
+                  {{ option }}
+                </option>
+              </select>
+            </div>
+
+            <!-- Department Filter -->
+            <div class="filter-dropdown-container department-dropdown-container">
+              <select
+                #departmentSelect
+                formControlName="department"
+                class="filter-select"
+              >
+                <option value="" disabled>Department</option>
+                <option *ngFor="let option of departmentOptions" [value]="option">
+                  {{ option }}
+                </option>
+              </select>
+            </div>
+
+            <!-- Clear Filters Button -->
+            <button
+              type="button"
+              class="clear-filter-btn"
+              *ngIf="searchForm.get('designation')?.value || searchForm.get('department')?.value"
+              (click)="clearFilters()"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+              Clear Filters
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="loading-container" @fadeIn>
+      <div class="spinner"></div>
+      <p>Loading employees...</p>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="!isLoading && filteredEmployees.length === 0" class="empty-state" @fadeIn>
+      <div class="empty-state-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+          <circle cx="8.5" cy="7" r="4"></circle>
+          <line x1="20" y1="8" x2="20" y2="14"></line>
+          <line x1="23" y1="11" x2="17" y2="11"></line>
+        </svg>
+      </div>
+      <h3>No Employees Found</h3>
+      <p>There are no employees matching your search criteria.</p>
+      <button class="btn btn-primary" (click)="clearFilters()">
+        Clear Filters
+      </button>
+    </div>
+
+    <!-- Employee Table -->
+    <div *ngIf="!isLoading && filteredEmployees.length > 0" class="table-container" @fadeIn>
+      <table class="table">
+        <thead>
+        <tr>
+          <th>Name</th>
+          <th>Designation</th>
+          <th>Department</th>
+          <th>Joining Date</th>
+          <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody @listAnimation>
+        <tr *ngFor="let employee of filteredEmployees" class="employee-row" (click)="viewEmployee(employee)">
+          <td class="employee-name-cell">
+            <div class="employee-avatar" *ngIf="employee.employee_photo">
+              <img [src]="employee.employee_photo" alt="Employee Photo">
+            </div>
+            <div class="employee-avatar placeholder" *ngIf="!employee.employee_photo">
+              {{employee.first_name.charAt(0)}}{{employee.last_name.charAt(0)}}
+            </div>
+            <div class="employee-name">
+              {{employee.first_name}} {{employee.last_name}}
+            </div>
+          </td>
+          <td>{{employee.designation || 'N/A'}}</td>
+          <td>{{employee.department || 'N/A'}}</td>
+          <td>{{formatDate(employee.date_of_joining)}}</td>
+          <td class="actions-cell">
+            <a [routerLink]="['/employee/edit', employee.id]" class="action-btn edit-btn" (click)="$event.stopPropagation()">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+              </svg>
+            </a>
+            <button class="action-btn delete-btn" (click)="deleteEmployee(employee.id, $event)">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="3 6 5 6 21 6"></polyline>
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                <line x1="10" y1="11" x2="10" y2="17"></line>
+                <line x1="14" y1="11" x2="14" y2="17"></line>
+              </svg>
+            </button>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</main>
+
+<!-- Employee Details Modal -->
+<div *ngIf="selectedEmployee" class="modal-overlay" (click)="closeEmployeeDetails()">
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>Employee Details</h3>
+      <button class="modal-close" (click)="closeEmployeeDetails()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <div class="employee-profile">
+        <div class="profile-header">
+          <div class="employee-avatar-large" *ngIf="selectedEmployee.employee_photo">
+            <img [src]="selectedEmployee.employee_photo" alt="Employee Photo">
+          </div>
+          <div class="employee-avatar-large placeholder" *ngIf="!selectedEmployee.employee_photo">
+            {{selectedEmployee.first_name.charAt(0)}}{{selectedEmployee.last_name.charAt(0)}}
+          </div>
+          <div class="employee-info">
+            <h4>{{selectedEmployee.first_name}} {{selectedEmployee.last_name}}</h4>
+            <p class="employee-title">{{selectedEmployee.designation}}</p>
+            <p class="employee-department">{{selectedEmployee.department}}</p>
+          </div>
+        </div>
+
+        <div class="profile-details">
+          <div class="detail-row">
+            <div class="detail-label">Email</div>
+            <div class="detail-value">{{selectedEmployee.email || 'Not provided'}}</div>
+          </div>
+          <div class="detail-row">
+            <div class="detail-label">Gender</div>
+            <div class="detail-value">{{selectedEmployee.gender || 'Not provided'}}</div>
+          </div>
+          <div class="detail-row">
+            <div class="detail-label">Salary</div>
+            <div class="detail-value">${{selectedEmployee.salary?.toLocaleString() || 'N/A'}}</div>
+          </div>
+          <div class="detail-row">
+            <div class="detail-label">Joining Date</div>
+            <div class="detail-value">{{formatDate(selectedEmployee.date_of_joining)}}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <a [routerLink]="['/employee/edit', selectedEmployee.id]" class="btn btn-primary">
+        Edit Employee
+      </a>
+    </div>
+  </div>
+</div>
