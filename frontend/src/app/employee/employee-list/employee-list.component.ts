@@ -7,6 +7,8 @@ import { EmployeeService } from '../../core/services/employee.service';
 import { NavbarComponent } from '../../shared/components/navbar/navbar.component';
 import { AlertComponent } from '../../shared/components/alert/alert.component';
 import { PageHeaderComponent } from '../../shared/components/page-header/page-header.component';
+import { EmployeeDetailsComponent } from '../employee-details/employee-details.component';
+import { ConfirmationModalComponent } from '../../shared/components/confirmation-modal/confirmation-modal.component';
 import { trigger, transition, style, animate, query, stagger } from '@angular/animations';
 import { Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
@@ -20,7 +22,9 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
     ReactiveFormsModule,
     NavbarComponent,
     AlertComponent,
-    PageHeaderComponent
+    PageHeaderComponent,
+    EmployeeDetailsComponent,
+    ConfirmationModalComponent
   ],
   templateUrl: './employee-list.component.html',
   styleUrls: ['./employee-list.component.css'],
@@ -56,6 +60,11 @@ export class EmployeeListComponent implements OnInit, OnDestroy {
   searchForm: FormGroup;
   formSubscription: Subscription | null = null;
 
+  // Delete confirmation
+  showDeleteConfirmation: boolean = false;
+  employeeToDelete: any = null;
+  isDeleting: boolean = false;
+
   // Dynamic options for dropdowns
   designationOptions: string[] = [];
   departmentOptions: string[] = [];
@@ -67,6 +76,7 @@ export class EmployeeListComponent implements OnInit, OnDestroy {
     private el: ElementRef
   ) {
     this.searchForm = this.fb.group({
+// src/app/employee/employee-list/employee-list.component.ts (continued)
       designation: [''],
       department: [''],
     });
@@ -208,15 +218,28 @@ export class EmployeeListComponent implements OnInit, OnDestroy {
     this.selectedEmployee = null;
   }
 
-  deleteEmployee(id: string, event: Event): void {
+  // Delete employee operation with confirmation
+  confirmDeleteEmployee(employee: any, event: Event): void {
     event.stopPropagation(); // Prevent row click
+    this.employeeToDelete = employee;
+    this.showDeleteConfirmation = true;
+  }
 
-    if (!confirm('Are you sure you want to delete this employee?')) {
-      return;
-    }
+  cancelDelete(): void {
+    this.employeeToDelete = null;
+    this.showDeleteConfirmation = false;
+  }
+
+  proceedWithDelete(): void {
+    if (!this.employeeToDelete) return;
+
+    this.isDeleting = true;
+    const id = this.employeeToDelete.id;
 
     this.employeeService.deleteEmployee(id).subscribe({
       next: () => {
+        this.isDeleting = false;
+        this.showDeleteConfirmation = false;
         this.successMessage = 'Employee deleted successfully';
         this.loadEmployees(); // Refresh the list
 
@@ -229,6 +252,8 @@ export class EmployeeListComponent implements OnInit, OnDestroy {
         setTimeout(() => this.successMessage = '', 3000);
       },
       error: (err: any) => {
+        this.isDeleting = false;
+        this.showDeleteConfirmation = false;
         console.error('Error deleting employee:', err);
         this.errorMessage = 'Failed to delete employee. Please try again.';
       }
@@ -239,11 +264,32 @@ export class EmployeeListComponent implements OnInit, OnDestroy {
   formatDate(dateString: string): string {
     if (!dateString) return 'N/A';
 
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
-    });
+    try {
+      // Extract date parts directly from ISO string to avoid timezone issues
+      const match = dateString.match(/^(\d{4})-(\d{2})-(\d{2})/);
+      if (match) {
+        const [_, year, month, day] = match;
+        // Create date object with date parts (note: JavaScript months are 0-indexed)
+        const date = new Date(Number(year), Number(month) - 1, Number(day));
+
+        return date.toLocaleDateString('en-US', {
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric'
+        });
+      }
+
+      // Fallback to regular date parsing if pattern doesn't match
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) return 'N/A';
+
+      return date.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+      });
+    } catch (e) {
+      return 'N/A';
+    }
   }
 }

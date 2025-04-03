@@ -147,7 +147,7 @@
                 <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
               </svg>
             </a>
-            <button class="action-btn delete-btn" (click)="deleteEmployee(employee.id, $event)">
+            <button class="action-btn delete-btn" (click)="confirmDeleteEmployee(employee, $event)">
               <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <polyline points="3 6 5 6 21 6"></polyline>
                 <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
@@ -163,60 +163,23 @@
   </div>
 </main>
 
-<!-- Employee Details Modal -->
-<div *ngIf="selectedEmployee" class="modal-overlay" (click)="closeEmployeeDetails()">
-  <div class="modal-container" (click)="$event.stopPropagation()">
-    <div class="modal-header">
-      <h3>Employee Details</h3>
-      <button class="modal-close" (click)="closeEmployeeDetails()">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="18" y1="6" x2="6" y2="18"></line>
-          <line x1="6" y1="6" x2="18" y2="18"></line>
-        </svg>
-      </button>
-    </div>
+<!-- Delete Confirmation Modal -->
+<app-confirmation-modal
+  *ngIf="showDeleteConfirmation"
+  title="Delete Employee"
+  [message]="'Are you sure you want to delete ' + (employeeToDelete?.first_name || '') + ' ' + (employeeToDelete?.last_name || '') + '? This action cannot be undone.'"
+  type="danger"
+  confirmText="Delete"
+  cancelText="Cancel"
+  [isLoading]="isDeleting"
+  (confirm)="proceedWithDelete()"
+  (cancel)="cancelDelete()"
+></app-confirmation-modal>
 
-    <div class="modal-body">
-      <div class="employee-profile">
-        <div class="profile-header">
-          <div class="employee-avatar-large" *ngIf="selectedEmployee.employee_photo">
-            <img [src]="selectedEmployee.employee_photo" alt="Employee Photo">
-          </div>
-          <div class="employee-avatar-large placeholder" *ngIf="!selectedEmployee.employee_photo">
-            {{selectedEmployee.first_name.charAt(0)}}{{selectedEmployee.last_name.charAt(0)}}
-          </div>
-          <div class="employee-info">
-            <h4>{{selectedEmployee.first_name}} {{selectedEmployee.last_name}}</h4>
-            <p class="employee-title">{{selectedEmployee.designation}}</p>
-            <p class="employee-department">{{selectedEmployee.department}}</p>
-          </div>
-        </div>
-
-        <div class="profile-details">
-          <div class="detail-row">
-            <div class="detail-label">Email</div>
-            <div class="detail-value">{{selectedEmployee.email || 'Not provided'}}</div>
-          </div>
-          <div class="detail-row">
-            <div class="detail-label">Gender</div>
-            <div class="detail-value">{{selectedEmployee.gender || 'Not provided'}}</div>
-          </div>
-          <div class="detail-row">
-            <div class="detail-label">Salary</div>
-            <div class="detail-value">${{selectedEmployee.salary?.toLocaleString() || 'N/A'}}</div>
-          </div>
-          <div class="detail-row">
-            <div class="detail-label">Joining Date</div>
-            <div class="detail-value">{{formatDate(selectedEmployee.date_of_joining)}}</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="modal-footer">
-      <a [routerLink]="['/employee/edit', selectedEmployee.id]" class="btn btn-primary">
-        Edit Employee
-      </a>
-    </div>
-  </div>
+<!-- Employee Details -->
+<div *ngIf="selectedEmployee">
+  <app-employee-details
+    [employee]="selectedEmployee"
+    (close)="closeEmployeeDetails()"
+  ></app-employee-details>
 </div>
