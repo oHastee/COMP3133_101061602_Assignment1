@@ -1,0 +1,152 @@
+/* src/app/shared/components/pagination/pagination.component.css */
+.pagination-container {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  align-items: center;
+  gap: var(--space-4);
+  margin-top: var(--space-4);
+  margin-bottom: var(--space-4);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--border-color);
+}
+
+.pagination-info {
+  color: var(--text-color-light);
+  font-size: var(--font-size-sm);
+  justify-self: start;
+}
+
+.pagination-size {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--text-color-light);
+  font-size: var(--font-size-sm);
+  justify-self: center;
+}
+
+/* Using the existing filter dropdown styling from your app */
+.filter-dropdown-container {
+  position: relative;
+  width: 70px;
+}
+
+.filter-select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  width: 100%;
+  padding: 10px 14px;
+  background-color: white;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  color: var(--text-color);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  outline: none;
+  text-align: center;
+}
+
+.filter-select:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+
+/* Custom dropdown arrow */
+.filter-dropdown-container::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  right: 14px;
+  transform: translateY(-50%);
+  width: 10px;
+  height: 10px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='24' height='24'%3E%3Cpath fill='none' d='M0 0h24v24H0z'/%3E%3Cpath d='M12 15l-4.243-4.243 1.415-1.414L12 12.172l2.828-2.829 1.415 1.414z' fill='rgba(100,116,139,1)'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-size: contain;
+  pointer-events: none;
+  opacity: 0.7;
+  transition: transform 0.2s ease;
+}
+
+.pagination-controls {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.pagination-controls.invisible {
+  visibility: hidden;
+}
+
+.page-numbers {
+  display: flex;
+  align-items: center;
+}
+
+.page-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 36px;
+  height: 36px;
+  padding: 0 var(--space-2);
+  margin: 0 var(--space-1);
+  background-color: var(--surface-color);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  color: var(--text-color);
+  cursor: pointer;
+  transition: all var(--transition-fast) var(--transition-ease);
+}
+
+.page-btn:hover:not(.disabled):not(.active):not(.ellipsis) {
+  background-color: var(--gray-100);
+  border-color: var(--gray-300);
+}
+
+.page-btn.active {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+  color: var(--text-color-inverse);
+}
+
+.page-btn.disabled,
+.page-btn.ellipsis,
+.page-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.page-btn.ellipsis {
+  background-color: transparent;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .pagination-container {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto;
+    gap: var(--space-3);
+  }
+
+  .pagination-info {
+    grid-row: 1;
+    justify-self: center;
+  }
+
+  .pagination-size {
+    grid-row: 2;
+    grid-column: 1;
+    justify-self: center;
+  }
+
+  .pagination-controls {
+    grid-row: 3;
+    grid-column: 1;
+    justify-self: center;
+  }
+}

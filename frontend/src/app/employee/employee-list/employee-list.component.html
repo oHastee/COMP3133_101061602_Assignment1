@@ -42,8 +42,9 @@
         <form [formGroup]="searchForm" class="filter-form">
           <div class="filter-label">Filter by:</div>
 
+          <!-- Update the filter section in your employee-list.component.html -->
           <div class="filter-section">
-            <!-- Modernized Designation Filter -->
+            <!-- Designation Filter -->
             <div class="filter-dropdown-container">
               <select
                 #designationSelect
@@ -58,7 +59,7 @@
               </select>
             </div>
 
-            <!-- Modernized Department Filter -->
+            <!-- Department Filter -->
             <div class="filter-dropdown-container">
               <select
                 #departmentSelect
@@ -127,7 +128,7 @@
         </tr>
         </thead>
         <tbody @listAnimation>
-        <tr *ngFor="let employee of filteredEmployees" class="employee-row" (click)="viewEmployee(employee)">
+        <tr *ngFor="let employee of paginatedEmployees" class="employee-row" (click)="viewEmployee(employee)">
           <td class="employee-name-cell">
             <div class="employee-avatar" *ngIf="employee.employee_photo">
               <img [src]="employee.employee_photo" alt="Employee Photo">
@@ -161,6 +162,16 @@
         </tr>
         </tbody>
       </table>
+
+      <!-- Pagination Component -->
+      <app-pagination
+        [totalItems]="filteredEmployees.length"
+        [itemsPerPage]="pageSize"
+        [currentPage]="currentPage"
+        [pageSizeOptions]="[5, 10, 25, 50]"
+        (pageChange)="onPageChange($event)"
+        (pageSizeChange)="onPageSizeChange($event)"
+      ></app-pagination>
     </div>
   </div>
 </main>

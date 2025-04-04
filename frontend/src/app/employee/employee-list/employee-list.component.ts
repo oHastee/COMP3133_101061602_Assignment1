@@ -9,6 +9,7 @@ import { AlertComponent } from '../../shared/components/alert/alert.component';
 import { PageHeaderComponent } from '../../shared/components/page-header/page-header.component';
 import { EmployeeDetailsComponent } from '../employee-details/employee-details.component';
 import { ConfirmationModalComponent } from '../../shared/components/confirmation-modal/confirmation-modal.component';
+import { PaginationComponent } from '../../shared/components/pagination/pagination.component';
 import { trigger, transition, style, animate, query, stagger } from '@angular/animations';
 import { Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
@@ -24,7 +25,8 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
     AlertComponent,
     PageHeaderComponent,
     EmployeeDetailsComponent,
-    ConfirmationModalComponent
+    ConfirmationModalComponent,
+    PaginationComponent
   ],
   templateUrl: './employee-list.component.html',
   styleUrls: ['./employee-list.component.css'],
@@ -53,12 +55,17 @@ export class EmployeeListComponent implements OnInit, OnDestroy {
 
   employees: any[] = [];
   filteredEmployees: any[] = [];
+  paginatedEmployees: any[] = [];
   selectedEmployee: any = null;
   isLoading: boolean = true;
   errorMessage: string = '';
   successMessage: string = '';
   searchForm: FormGroup;
   formSubscription: Subscription | null = null;
+
+  // Pagination
+  pageSize: number = 10;
+  currentPage: number = 1;
 
   // Delete confirmation
   showDeleteConfirmation: boolean = false;
@@ -76,7 +83,6 @@ export class EmployeeListComponent implements OnInit, OnDestroy {
     private el: ElementRef
   ) {
     this.searchForm = this.fb.group({
-// src/app/employee/employee-list/employee-list.component.ts (continued)
       designation: [''],
       department: [''],
     });
@@ -94,6 +100,7 @@ export class EmployeeListComponent implements OnInit, OnDestroy {
         )
       )
       .subscribe(() => {
+        this.currentPage = 1; // Reset to first page on filter change
         this.applyFilters();
       });
   }
@@ -132,6 +139,7 @@ export class EmployeeListComponent implements OnInit, OnDestroy {
       next: (res: any) => {
         this.employees = res.data.getAllEmployees;
         this.filteredEmployees = [...this.employees];
+        this.paginateEmployees();
         this.isLoading = false;
 
         // Extract unique designations and departments
@@ -167,6 +175,7 @@ export class EmployeeListComponent implements OnInit, OnDestroy {
     if (!designation && !department) {
       // No filters applied
       this.filteredEmployees = [...this.employees];
+      this.paginateEmployees();
       return;
     }
 
@@ -176,6 +185,8 @@ export class EmployeeListComponent implements OnInit, OnDestroy {
       const matchDepartment = !department || emp.department === department;
       return matchDesignation && matchDepartment;
     });
+
+    this.paginateEmployees();
 
     // Then fetch from server for accurate results
     this.fetchFilteredEmployees(designation, department);
@@ -190,6 +201,7 @@ export class EmployeeListComponent implements OnInit, OnDestroy {
     this.employeeService.searchEmployeeByDesignationOrDepartment(designation, department).subscribe({
       next: (res: any) => {
         this.filteredEmployees = res.data.searchEmployeeByDesignationOrDepartment;
+        this.paginateEmployees();
         this.isLoading = false;
       },
       error: (err: any) => {
@@ -200,6 +212,41 @@ export class EmployeeListComponent implements OnInit, OnDestroy {
     });
   }
 
+  paginateEmployees(): void {
+    // Calculate total pages
+    const totalPages = Math.ceil(this.filteredEmployees.length / this.pageSize);
+
+    // Ensure current page is valid
+    if (this.currentPage > totalPages && totalPages > 0) {
+      this.currentPage = totalPages;
+    }
+
+    const startIndex = (this.currentPage - 1) * this.pageSize;
+    const endIndex = Math.min(startIndex + this.pageSize, this.filteredEmployees.length);
+    this.paginatedEmployees = this.filteredEmployees.slice(startIndex, endIndex);
+  }
+
+  onPageChange(page: number): void {
+    this.currentPage = page;
+    this.paginateEmployees();
+  }
+
+  onPageSizeChange(size: number): void {
+    const currentFirstItem = (this.currentPage - 1) * this.pageSize + 1;
+    this.pageSize = size;
+
+    // Calculate which page would contain the first item from the previous page
+    this.currentPage = Math.ceil(currentFirstItem / this.pageSize);
+
+    // Ensure the current page is valid
+    const maxPage = Math.ceil(this.filteredEmployees.length / this.pageSize);
+    if (this.currentPage > maxPage) {
+      this.currentPage = Math.max(1, maxPage);
+    }
+
+    this.paginateEmployees();
+  }
+
   // Clear all filters
   clearFilters(): void {
     this.searchForm.patchValue({
@@ -208,6 +255,7 @@ export class EmployeeListComponent implements OnInit, OnDestroy {
     }, { emitEvent: false });
 
     this.filteredEmployees = [...this.employees];
+    this.paginateEmployees();
   }
 
   viewEmployee(employee: any): void {
