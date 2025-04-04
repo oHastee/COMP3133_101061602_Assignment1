@@ -1,5 +1,5 @@
 // src/app/employee/employee-list/employee-list.component.ts
-import { Component, OnInit, OnDestroy, HostListener, ElementRef, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
@@ -10,6 +10,7 @@ import { PageHeaderComponent } from '../../shared/components/page-header/page-he
 import { EmployeeDetailsComponent } from '../employee-details/employee-details.component';
 import { ConfirmationModalComponent } from '../../shared/components/confirmation-modal/confirmation-modal.component';
 import { PaginationComponent } from '../../shared/components/pagination/pagination.component';
+import { CustomDropdownComponent } from '../../shared/components/custom-dropdown/custom-dropdown.component';
 import { trigger, transition, style, animate, query, stagger } from '@angular/animations';
 import { Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
@@ -26,7 +27,8 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
     PageHeaderComponent,
     EmployeeDetailsComponent,
     ConfirmationModalComponent,
-    PaginationComponent
+    PaginationComponent,
+    CustomDropdownComponent
   ],
   templateUrl: './employee-list.component.html',
   styleUrls: ['./employee-list.component.css'],
@@ -50,9 +52,6 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
   ]
 })
 export class EmployeeListComponent implements OnInit, OnDestroy {
-  @ViewChild('designationSelect', { static: false }) designationSelect?: ElementRef;
-  @ViewChild('departmentSelect', { static: false }) departmentSelect?: ElementRef;
-
   employees: any[] = [];
   filteredEmployees: any[] = [];
   paginatedEmployees: any[] = [];
@@ -75,12 +74,13 @@ export class EmployeeListComponent implements OnInit, OnDestroy {
   // Dynamic options for dropdowns
   designationOptions: string[] = [];
   departmentOptions: string[] = [];
+  designationOptionsFormatted: {value: string, label: string}[] = [];
+  departmentOptionsFormatted: {value: string, label: string}[] = [];
 
   constructor(
     private employeeService: EmployeeService,
     private router: Router,
-    private fb: FormBuilder,
-    private el: ElementRef
+    private fb: FormBuilder
   ) {
     this.searchForm = this.fb.group({
       designation: [''],
@@ -109,24 +109,6 @@ export class EmployeeListComponent implements OnInit, OnDestroy {
     // Clean up subscription
     if (this.formSubscription) {
       this.formSubscription.unsubscribe();
-    }
-  }
-
-  // Close dropdowns when clicking outside
-  @HostListener('document:click', ['$event'])
-  onDocumentClick(event: MouseEvent): void {
-    const target = event.target as HTMLElement;
-    const designationContainer = this.el.nativeElement.querySelector('.designation-dropdown-container');
-    const departmentContainer = this.el.nativeElement.querySelector('.department-dropdown-container');
-
-    // Close designation dropdown if clicked outside
-    if (designationContainer && !designationContainer.contains(target)) {
-      this.designationSelect?.nativeElement.blur();
-    }
-
-    // Close department dropdown if clicked outside
-    if (departmentContainer && !departmentContainer.contains(target)) {
-      this.departmentSelect?.nativeElement.blur();
     }
   }
 
@@ -167,6 +149,26 @@ export class EmployeeListComponent implements OnInit, OnDestroy {
 
     this.designationOptions = Array.from(designations).sort();
     this.departmentOptions = Array.from(departments).sort();
+
+    // Format for the custom dropdown
+    this.designationOptionsFormatted = [
+      { value: '', label: 'All Designations' },
+      ...this.designationOptions.map(d => ({ value: d, label: d }))
+    ];
+
+    this.departmentOptionsFormatted = [
+      { value: '', label: 'All Departments' },
+      ...this.departmentOptions.map(d => ({ value: d, label: d }))
+    ];
+  }
+
+  // Handlers for dropdown changes
+  onDesignationChange(value: string): void {
+    this.searchForm.patchValue({ designation: value });
+  }
+
+  onDepartmentChange(value: string): void {
+    this.searchForm.patchValue({ department: value });
   }
 
   applyFilters(): void {

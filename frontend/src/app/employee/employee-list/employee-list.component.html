@@ -42,36 +42,28 @@
         <form [formGroup]="searchForm" class="filter-form">
           <div class="filter-label">Filter by:</div>
 
-          <!-- Update the filter section in your employee-list.component.html -->
+          <!-- Filter section with custom dropdowns -->
           <div class="filter-section">
             <!-- Designation Filter -->
-            <div class="filter-dropdown-container">
-              <select
-                #designationSelect
-                formControlName="designation"
-                class="filter-select"
-                aria-label="Filter by designation"
-              >
-                <option value="" disabled selected>Designation</option>
-                <option *ngFor="let option of designationOptions" [value]="option">
-                  {{ option }}
-                </option>
-              </select>
+            <div class="filter-group">
+              <app-custom-dropdown
+                [options]="designationOptionsFormatted"
+                [selectedValue]="searchForm.get('designation')?.value || ''"
+                [placeholder]="'Designation'"
+                [width]="'180px'"
+                (selectionChange)="onDesignationChange($event)"
+              ></app-custom-dropdown>
             </div>
 
             <!-- Department Filter -->
-            <div class="filter-dropdown-container">
-              <select
-                #departmentSelect
-                formControlName="department"
-                class="filter-select"
-                aria-label="Filter by department"
-              >
-                <option value="" disabled selected>Department</option>
-                <option *ngFor="let option of departmentOptions" [value]="option">
-                  {{ option }}
-                </option>
-              </select>
+            <div class="filter-group">
+              <app-custom-dropdown
+                [options]="departmentOptionsFormatted"
+                [selectedValue]="searchForm.get('department')?.value || ''"
+                [placeholder]="'Department'"
+                [width]="'180px'"
+                (selectionChange)="onDepartmentChange($event)"
+              ></app-custom-dropdown>
             </div>
 
             <!-- Clear Filters Button -->
