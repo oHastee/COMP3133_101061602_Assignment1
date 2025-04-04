@@ -7,7 +7,27 @@ const path = require('path');
 const User = require('../models/User');
 const Employee = require('../models/Employee');
 
+// Environment variables
 const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret';
+const NODE_ENV = process.env.NODE_ENV || 'development';
+const PORT = process.env.PORT || 3000;
+const UPLOAD_DIR = process.env.UPLOAD_DIR || 'uploads';
+
+// Ensure upload directory exists
+const ensureUploadDirExists = () => {
+    const uploadPath = path.join(__dirname, '../../', UPLOAD_DIR);
+    if (!fs.existsSync(uploadPath)) {
+        fs.mkdirSync(uploadPath, { recursive: true });
+    }
+    return uploadPath;
+};
+
+// Get base URL for file access
+const getBaseUrl = () => {
+    return NODE_ENV === 'production'
+        ? process.env.BASE_URL || 'https://your-render-app.onrender.com'
+        : `http://localhost:${PORT}`;
+};
 
 const resolvers = {
     Upload: GraphQLUpload,
@@ -128,6 +148,24 @@ const resolvers = {
             if (!employee) {
                 throw new Error('Employee not found');
             }
+
+            // If there's a profile picture, attempt to delete it
+            if (employee.employee_photo) {
+                try {
+                    const photoPath = employee.employee_photo;
+                    const fileName = photoPath.substring(photoPath.lastIndexOf('/') + 1);
+                    const filePath = path.join(ensureUploadDirExists(), fileName);
+
+                    if (fs.existsSync(filePath)) {
+                        fs.unlinkSync(filePath);
+                        console.log(`Deleted profile picture: ${filePath}`);
+                    }
+                } catch (error) {
+                    console.error('Error deleting profile picture:', error);
+                    // Continue with employee deletion even if file deletion fails
+                }
+            }
+
             return employee;
         },
 
@@ -135,17 +173,30 @@ const resolvers = {
         uploadProfilePicture: async (_, { file }) => {
             const { createReadStream, filename } = await file;
             const uniqueFilename = `${Date.now()}-${filename}`;
-            const filepath = path.join(__dirname, '../../uploads', uniqueFilename);
+            const uploadPath = ensureUploadDirExists();
+            const filepath = path.join(uploadPath, uniqueFilename);
 
-            await new Promise((resolve, reject) => {
-                createReadStream()
-                    .pipe(fs.createWriteStream(filepath))
-                    .on('finish', resolve)
-                    .on('error', reject);
-            });
+            // Ensure directory exists
+            const directory = path.dirname(filepath);
+            if (!fs.existsSync(directory)) {
+                fs.mkdirSync(directory, { recursive: true });
+            }
 
-            // Return a URL (adjust the URL as needed)
-            return `http://localhost:3000/uploads/${uniqueFilename}`;
+            try {
+                await new Promise((resolve, reject) => {
+                    createReadStream()
+                        .pipe(fs.createWriteStream(filepath))
+                        .on('finish', resolve)
+                        .on('error', reject);
+                });
+
+                // Return a URL based on environment
+                const baseUrl = getBaseUrl();
+                return `${baseUrl}/uploads/${uniqueFilename}`;
+            } catch (error) {
+                console.error('File upload error:', error);
+                throw new Error(`File upload failed: ${error.message}`);
+            }
         }
     },
     Employee: {

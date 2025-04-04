@@ -1,0 +1,9 @@
+# netlify.toml
+[build]
+command = "ng build --configuration production"
+publish = "dist/101061602_comp3133_assignment2"
+
+[[redirects]]
+from = "/*"
+to = "/index.html"
+status = 200
