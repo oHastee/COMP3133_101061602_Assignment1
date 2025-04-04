@@ -484,3 +484,126 @@ label {
     display: none !important;
   }
 }
+
+/* Add these styles to your global styles.css or the relevant component CSS */
+/* Modern styled dropdown menu */
+.dropdown-menu {
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  max-height: 400px;
+  overflow-y: auto;
+  min-width: 200px;
+  padding: 6px 0;
+  margin-top: 4px;
+}
+/* Style for dropdown items */
+.dropdown-item,
+.dropdown-menu .mat-option,
+select option {
+  padding: 10px 16px;
+  font-size: 14px;
+  color: #333;
+  transition: background-color 0.2s;
+  cursor: pointer;
+  display: block;
+  width: 100%;
+  text-align: left;
+  border: none;
+  background: none;
+  line-height: 1.5;
+}
+/* Hover state for options */
+.dropdown-item:hover,
+.dropdown-menu .mat-option:hover,
+select option:hover {
+  background-color: #f5f8ff;
+}
+/* Selected option state */
+.dropdown-item.active,
+.dropdown-menu .mat-option.selected,
+select option:checked {
+  background-color: #4285f4;
+  color: white;
+  font-weight: 500;
+}
+/* Custom scrollbar for dropdown */
+.dropdown-menu::-webkit-scrollbar {
+  width: 8px;
+}
+.dropdown-menu::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+.dropdown-menu::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 4px;
+}
+.dropdown-menu::-webkit-scrollbar-thumb:hover {
+  background: #aaa;
+}
+/* Dropdown header/title if any */
+.dropdown-header {
+  padding: 8px 16px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+/* Add smooth transitions */
+.dropdown-menu {
+  animation: dropdown-fade-in 0.2s ease-out;
+}
+@keyframes dropdown-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+/* For Angular Material or other framework-specific elements */
+/* Replace the deprecated ::ng-deep with proper class selectors */
+.mat-select-panel {
+  border-radius: 10px !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1) !important;
+}
+.mat-option {
+  line-height: 1.5 !important;
+  height: auto !important;
+  padding: 10px 16px !important;
+}
+.mat-option.mat-selected:not(.mat-option-disabled) {
+  background-color: #4285f4 !important;
+  color: white !important;
+}
+/* Mobile optimization */
+@media (max-width: 576px) {
+  .dropdown-menu {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    top: auto;
+    width: 100%;
+    max-height: 60vh;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    box-shadow: 0 -2px 20px rgba(0, 0, 0, 0.1);
+    animation: slide-up 0.3s ease-out;
+  }
+
+  @keyframes slide-up {
+    from {
+      transform: translateY(100%);
+    }
+    to {
+      transform: translateY(0);
+    }
+  }
+}
