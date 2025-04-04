@@ -1,3 +1,4 @@
+// backend/src/resolvers/resolvers.js
 const { GraphQLUpload } = require('graphql-upload');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
@@ -13,18 +14,39 @@ const resolvers = {
     Query: {
         // Login Query: validate user credentials and return JWT token
         login: async (_, { usernameOrEmail, password }) => {
+            // Try to find the user
             const user = await User.findOne({
                 $or: [{ username: usernameOrEmail }, { email: usernameOrEmail }]
             });
+
             if (!user) {
                 throw new Error('No account found with that username or email.');
             }
-            const valid = await bcrypt.compare(password, user.password);
-            if (!valid) {
+
+            // Log the length of provided password and stored password
+            console.log(`Login attempt - Password lengths: provided=${password.length}, stored hash length=${user.password.length}`);
+
+            // Verify the password using bcrypt's compare method
+            try {
+                const valid = await bcrypt.compare(password, user.password);
+
+                if (!valid) {
+                    console.log('Password comparison failed');
+                    throw new Error('Incorrect password. Please try again.');
+                }
+
+                // Create a new token with the user id that expires in 24 hours
+                const token = jwt.sign(
+                    { id: user._id },
+                    JWT_SECRET,
+                    { expiresIn: '1d' }
+                );
+
+                return { token, user };
+            } catch (error) {
+                console.error('Password validation error:', error.message);
                 throw new Error('Incorrect password. Please try again.');
             }
-            const token = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: '1d' });
-            return { token, user };
         },
 
         // Retrieve all employees
@@ -55,6 +77,7 @@ const resolvers = {
             const existingUser = await User.findOne({
                 $or: [{ username: username }, { email: email }]
             });
+
             if (existingUser) {
                 if (existingUser.username === username) {
                     throw new Error('Username already taken');
@@ -63,10 +86,20 @@ const resolvers = {
                     throw new Error('Email already in use');
                 }
             }
-            const hashedPassword = await bcrypt.hash(password, 10);
-            const user = new User({ username, email, password: hashedPassword });
-            await user.save();
-            return user;
+
+            console.log(`Creating user with password length: ${password.length}`);
+
+            try {
+                // Create new user with unmodified password - let the schema pre-save hook handle hashing
+                const user = new User({ username, email, password });
+                await user.save();
+
+                console.log(`User ${username} created successfully with password hash length: ${user.password.length}`);
+                return user;
+            } catch (error) {
+                console.error('User creation error:', error);
+                throw new Error('Error creating user: ' + error.message);
+            }
         },
 
         // Add a new employee
