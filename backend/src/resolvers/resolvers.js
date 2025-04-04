@@ -25,7 +25,7 @@ const ensureUploadDirExists = () => {
 // Get base URL for file access
 const getBaseUrl = () => {
     return NODE_ENV === 'production'
-        ? process.env.BASE_URL || 'https://your-render-app.onrender.com'
+        ? process.env.BASE_URL || 'https://employee-management-api-19ru.onrender.com'
         : `http://localhost:${PORT}`;
 };
 
