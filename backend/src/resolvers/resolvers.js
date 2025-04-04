@@ -172,31 +172,17 @@ const resolvers = {
         // File upload mutation for profile picture
         uploadProfilePicture: async (_, { file }) => {
             const { createReadStream, filename } = await file;
-            const uniqueFilename = `${Date.now()}-${filename}`;
-            const uploadPath = ensureUploadDirExists();
-            const filepath = path.join(uploadPath, uniqueFilename);
 
-            // Ensure directory exists
-            const directory = path.dirname(filepath);
-            if (!fs.existsSync(directory)) {
-                fs.mkdirSync(directory, { recursive: true });
+            // Convert to buffer and then to base64
+            const chunks = [];
+            for await (const chunk of createReadStream()) {
+                chunks.push(chunk);
             }
+            const buffer = Buffer.concat(chunks);
+            const base64Image = `data:image/jpeg;base64,${buffer.toString('base64')}`;
 
-            try {
-                await new Promise((resolve, reject) => {
-                    createReadStream()
-                        .pipe(fs.createWriteStream(filepath))
-                        .on('finish', resolve)
-                        .on('error', reject);
-                });
-
-                // Return a URL based on environment
-                const baseUrl = getBaseUrl();
-                return `${baseUrl}/uploads/${uniqueFilename}`;
-            } catch (error) {
-                console.error('File upload error:', error);
-                throw new Error(`File upload failed: ${error.message}`);
-            }
+            // Return the base64 string to store in MongoDB
+            return base64Image;
         }
     },
     Employee: {
