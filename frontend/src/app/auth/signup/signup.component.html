@@ -106,7 +106,7 @@
             <!-- Password field -->
             <div class="form-group">
               <label for="password">Password</label>
-              <div class="input-with-icon">
+              <div class="input-with-icon" [ngClass]="{'has-validation': hasError('password', 'required') || hasError('password', 'minlength') || hasError('password', 'pattern')}">
                 <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
                   <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
@@ -139,11 +139,8 @@
               <div class="invalid-feedback" *ngIf="hasError('password', 'required')">
                 Password is required
               </div>
-              <div class="invalid-feedback" *ngIf="hasError('password', 'minlength')">
-                Password must be at least 6 characters
-              </div>
               <div class="invalid-feedback" *ngIf="hasError('password', 'pattern')">
-                Password must contain at least one uppercase letter, one lowercase letter, and one number
+                Password must be at least 6 characters with uppercase, lowercase and a number
               </div>
               <div class="password-info">
                 Password must be at least 6 characters with uppercase, lowercase and a number
@@ -153,7 +150,7 @@
             <!-- Confirm Password field -->
             <div class="form-group">
               <label for="confirmPassword">Confirm Password</label>
-              <div class="input-with-icon">
+              <div class="input-with-icon" [ngClass]="{'has-validation': hasError('confirmPassword', 'required') || signupForm.hasError('mismatch')}">
                 <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
                   <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
@@ -163,47 +160,75 @@
                   id="confirmPassword"
                   formControlName="confirmPassword"
                   class="form-control"
-                  [ngClass]="{'is-invalid': hasError('confirmPassword', 'required') || signupForm.errors?.['mismatch']}"
+                  [ngClass]="{'is-invalid': hasError('confirmPassword', 'required') || signupForm.hasError('mismatch')}"
                   placeholder="Confirm password"
                   autocomplete="new-password"
                 />
+                <button
+                  type="button"
+                  class="password-toggle"
+                  (click)="togglePasswordVisibility()"
+                  [attr.aria-label]="showPassword ? 'Hide password' : 'Show password'"
+                >
+                  <svg *ngIf="!showPassword" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                  </svg>
+                  <svg *ngIf="showPassword" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                    <line x1="1" y1="1" x2="23" y2="23"></line>
+                  </svg>
+                </button>
               </div>
               <div class="invalid-feedback" *ngIf="hasError('confirmPassword', 'required')">
                 Please confirm your password
               </div>
-              <div class="invalid-feedback" *ngIf="signupForm.errors?.['mismatch']">
+              <div class="invalid-feedback" *ngIf="signupForm.hasError('mismatch')">
                 Passwords do not match
               </div>
             </div>
 
             <!-- Terms and Conditions -->
-            <div class="form-group">
-              <div class="form-check">
-                <input
-                  type="checkbox"
-                  id="agreeTerms"
-                  formControlName="agreeTerms"
-                  class="form-check-input"
-                  [ngClass]="{'is-invalid': hasError('agreeTerms', 'requiredTrue')}"
-                />
-                <label class="form-check-label" for="agreeTerms">
-                  I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>
-                </label>
+            <div class="form-group terms-container">
+              <div class="terms-checkbox-wrapper">
+                <div class="form-check">
+                  <input
+                    type="checkbox"
+                    id="agreeTerms"
+                    formControlName="agreeTerms"
+                    class="form-check-input larger-checkbox"
+                    [ngClass]="{'is-invalid': hasError('agreeTerms', 'requiredTrue')}"
+                  />
+                  <label class="form-check-label terms-label" for="agreeTerms">
+                    I agree to the <a href="#" class="terms-link">Terms of Service</a> and <a href="#" class="terms-link">Privacy Policy</a>
+                  </label>
+                </div>
               </div>
-              <div class="invalid-feedback" *ngIf="hasError('agreeTerms', 'requiredTrue')">
-                You must agree to the terms and conditions
+
+              <!-- Error message with improved visibility - only inside the terms container -->
+              <div class="terms-error" *ngIf="hasError('agreeTerms', 'requiredTrue') || (formSubmitted && !signupForm.get('agreeTerms')?.value)">
+                <div class="error-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                  </svg>
+                </div>
+                <span class="error-text">You must agree to the terms and conditions to create an account</span>
               </div>
             </div>
 
             <!-- Submit button -->
-            <button
-              type="submit"
-              class="btn btn-primary w-100"
-              [disabled]="signupForm.invalid || isLoading"
-            >
-              <span *ngIf="isLoading" class="spinner spinner-sm mr-2"></span>
-              {{ isLoading ? 'Creating Account...' : 'Create Account' }}
-            </button>
+            <div class="form-actions">
+              <button
+                type="submit"
+                class="btn btn-primary w-100"
+                [disabled]="isLoading"
+              >
+                <span *ngIf="isLoading" class="spinner spinner-sm mr-2"></span>
+                {{ isLoading ? 'Creating Account...' : 'Create Account' }}
+              </button>
+            </div>
 
             <!-- Login link -->
             <div class="auth-alt-option">
@@ -220,7 +245,7 @@
           <h2>Manage Your Team</h2>
           <p>Join our Employee Management System to efficiently manage your workforce data.</p>
           <div class="illustration-image">
-            <img src="assets/images/signup-illustration.svg" alt="Team Management Illustration">
+            <img ngSrc="assets/images/signup-illustration.svg" width="500" height="400" alt="Team Management Illustration" priority>
           </div>
         </div>
       </div>
