@@ -1,6 +1,6 @@
-# netlify.toml
 [build]
-command = "ng build --configuration production"
+base = "frontend"
+command = "npm install --legacy-peer-deps && ng build --configuration production"
 publish = "dist/101061602_comp3133_assignment2"
 
 [[redirects]]
