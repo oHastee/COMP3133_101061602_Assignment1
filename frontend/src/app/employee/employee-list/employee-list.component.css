@@ -47,68 +47,89 @@
   align-items: center;
 }
 
-/* Filter dropdown container and button */
+/* Modernized filter dropdowns */
 .filter-dropdown-container {
   position: relative;
   width: 200px;
 }
 
 .filter-select {
-  appearance: none; /* Remove default browser styling */
+  appearance: none;
   -webkit-appearance: none;
   -moz-appearance: none;
   width: 100%;
-  padding: var(--space-2) var(--space-4);
-  padding-right: 30px; /* Space for custom dropdown arrow */
-  background-color: var(--surface-color);
+  padding: 10px 14px;
+  background-color: white;
   border: 1px solid var(--border-color);
-  border-radius: var(--radius-md);
+  border-radius: 8px;
   color: var(--text-color);
-  font-size: var(--font-size-sm);
+  font-size: 14px;
+  font-weight: 500;
   cursor: pointer;
-  transition: all var(--transition-fast) var(--transition-ease);
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
   outline: none;
 }
 
 .filter-select:focus {
   border-color: var(--primary-color);
-  box-shadow: 0 0 0 2px var(--primary-color-50);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
 }
 
 /* Custom dropdown arrow */
-.filter-dropdown-container {
-  position: relative;
-}
-
 .filter-dropdown-container::after {
-  content: '▼';
+  content: '';
   position: absolute;
   top: 50%;
-  right: 10px;
+  right: 14px;
   transform: translateY(-50%);
+  width: 10px;
+  height: 10px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='24' height='24'%3E%3Cpath fill='none' d='M0 0h24v24H0z'/%3E%3Cpath d='M12 15l-4.243-4.243 1.415-1.414L12 12.172l2.828-2.829 1.415 1.414z' fill='rgba(100,116,139,1)'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-size: contain;
   pointer-events: none;
-  color: var(--text-color-light);
-  font-size: 0.7em;
+  opacity: 0.7;
+  transition: transform 0.2s ease;
+}
+
+.filter-dropdown-container:hover::after {
+  opacity: 1;
+}
+
+.filter-select:focus + .filter-dropdown-container::after {
+  transform: translateY(-50%) rotate(180deg);
+}
+
+.filter-select option {
+  padding: 8px;
+  font-weight: normal;
 }
 
 .filter-select:disabled {
+  background-color: var(--gray-100);
   color: var(--text-color-light);
-  background-color: var(--gray-50);
   cursor: not-allowed;
+  opacity: 0.7;
 }
+
+
 
 /* Clear filters button */
 .clear-filter-btn {
   display: flex;
   align-items: center;
-  padding: var(--space-2) var(--space-4);
-  background-color: var(--danger-color-light);
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background-color: var(--surface-color);
   border: 1px solid var(--danger-color);
-  border-radius: var(--radius-md);
+  border-radius: 8px;
   color: var(--danger-color);
+  font-weight: 500;
+  font-size: 14px;
   cursor: pointer;
-  font-size: var(--font-size-sm);
-  transition: all var(--transition-fast) var(--transition-ease);
+  transition: all 0.2s ease;
 }
 
 .clear-filter-btn:hover {
@@ -117,7 +138,56 @@
 }
 
 .clear-filter-btn svg {
-  margin-right: var(--space-2);
+  width: 16px;
+  height: 16px;
+}
+
+/* Custom dropdown styling */
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 1000;
+  display: none;
+  min-width: 200px;
+  padding: 8px 0;
+  margin-top: 4px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  border: 1px solid var(--border-color);
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.dropdown-menu.show {
+  display: block;
+}
+
+.dropdown-item {
+  display: block;
+  width: 100%;
+  padding: 8px 16px;
+  clear: both;
+  text-align: inherit;
+  white-space: nowrap;
+  background-color: transparent;
+  border: 0;
+  color: var(--text-color);
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.dropdown-item:hover,
+.dropdown-item:focus {
+  background-color: var(--primary-color-50);
+  color: var(--primary-color);
+}
+
+.dropdown-item.active {
+  background-color: var(--primary-color-100);
+  color: var(--primary-color);
+  font-weight: 500;
 }
 
 /* Table styles */

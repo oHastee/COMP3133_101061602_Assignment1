@@ -26,7 +26,7 @@
       @fadeIn
     ></app-alert>
 
-    <!-- Action Bar -->
+
     <div class="action-bar" @fadeIn>
       <div class="action-buttons">
         <a routerLink="/employee/add" class="btn btn-primary">
@@ -43,28 +43,30 @@
           <div class="filter-label">Filter by:</div>
 
           <div class="filter-section">
-            <!-- Designation Filter -->
-            <div class="filter-dropdown-container designation-dropdown-container">
+            <!-- Modernized Designation Filter -->
+            <div class="filter-dropdown-container">
               <select
                 #designationSelect
                 formControlName="designation"
                 class="filter-select"
+                aria-label="Filter by designation"
               >
-                <option value="" disabled>Designation</option>
+                <option value="" disabled selected>Designation</option>
                 <option *ngFor="let option of designationOptions" [value]="option">
                   {{ option }}
                 </option>
               </select>
             </div>
 
-            <!-- Department Filter -->
-            <div class="filter-dropdown-container department-dropdown-container">
+            <!-- Modernized Department Filter -->
+            <div class="filter-dropdown-container">
               <select
                 #departmentSelect
                 formControlName="department"
                 class="filter-select"
+                aria-label="Filter by department"
               >
-                <option value="" disabled>Department</option>
+                <option value="" disabled selected>Department</option>
                 <option *ngFor="let option of departmentOptions" [value]="option">
                   {{ option }}
                 </option>
