@@ -1,10 +1,12 @@
+// src/app/shared/components/pagination/pagination.component.ts
 import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { CustomDropdownComponent } from '../custom-dropdown/custom-dropdown.component';
 
 @Component({
   selector: 'app-pagination',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, CustomDropdownComponent],
   templateUrl: './pagination.component.html',
   styleUrls: ['./pagination.component.css']
 })
@@ -19,9 +21,28 @@ export class PaginationComponent implements OnChanges {
 
   pages: number[] = [];
   totalPages: number = 0;
+  pageSizeOptionsFormatted: {value: string, label: string}[] = [];
+
+  constructor() {
+    this.formatPageSizeOptions();
+  }
+
+  ngOnInit() {
+    this.formatPageSizeOptions();
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
     this.calculatePages();
+    if (changes['pageSizeOptions']) {
+      this.formatPageSizeOptions();
+    }
+  }
+
+  formatPageSizeOptions() {
+    this.pageSizeOptionsFormatted = this.pageSizeOptions.map(size => ({
+      value: size.toString(),
+      label: size.toString()
+    }));
   }
 
   calculatePages(): void {
@@ -66,9 +87,8 @@ export class PaginationComponent implements OnChanges {
     }
   }
 
-  changePageSize(event: Event): void {
-    const selectElement = event.target as HTMLSelectElement;
-    const size = parseInt(selectElement.value, 10);
+  changePageSize(sizeStr: string): void {
+    const size = parseInt(sizeStr, 10);
     if (size !== this.itemsPerPage) {
       this.pageSizeChange.emit(size);
     }

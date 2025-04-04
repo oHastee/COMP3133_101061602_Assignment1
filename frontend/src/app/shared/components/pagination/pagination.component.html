@@ -5,17 +5,14 @@
   </div>
 
   <div class="pagination-size">
-    <label for="pageSize">Show</label>
-    <div class="filter-dropdown-container">
-      <select
-        id="pageSize"
-        class="filter-select"
-        [value]="itemsPerPage"
-        (change)="changePageSize($event)"
-      >
-        <option *ngFor="let size of pageSizeOptions" [value]="size">{{ size }}</option>
-      </select>
-    </div>
+    <span>Show</span>
+    <app-custom-dropdown
+      [options]="pageSizeOptionsFormatted"
+      [selectedValue]="itemsPerPage.toString()"
+      [width]="'70px'"
+      [dropup]="true"
+      (selectionChange)="changePageSize($event)"
+    ></app-custom-dropdown>
     <span>entries</span>
   </div>
 
