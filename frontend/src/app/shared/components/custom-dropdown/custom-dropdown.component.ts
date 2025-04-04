@@ -1,4 +1,5 @@
-import { Component, Input, Output, EventEmitter, HostListener, ElementRef } from '@angular/core';
+// src/app/shared/components/custom-dropdown/custom-dropdown.component.ts
+import { Component, Input, Output, EventEmitter, HostListener, ElementRef, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { trigger, transition, style, animate } from '@angular/animations';
 
@@ -7,28 +8,29 @@ import { trigger, transition, style, animate } from '@angular/animations';
   standalone: true,
   imports: [CommonModule],
   template: `
-    <div class="custom-dropdown-container" [class.open]="isOpen">
+    <div class="custom-dropdown-container" [class.open]="isOpen" [class.dropup]="dropup">
       <button
         class="custom-select"
         type="button"
         (click)="toggleDropdown()"
-        [attr.aria-label]="'Filter by ' + label"
+        [attr.aria-label]="'Select ' + label"
+        [style.width]="width"
       >
-        <span class="select-value">{{ selectedValue || placeholder }}</span>
+        <span class="select-value">{{ selectedLabel || placeholder }}</span>
         <span class="dropdown-arrow">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <polyline points="6 9 12 15 18 9"></polyline>
           </svg>
         </span>
       </button>
-      <div class="dropdown-options" *ngIf="isOpen" @fadeInDown>
+      <div class="dropdown-options" *ngIf="isOpen" [@dropAnimation]="dropup ? 'dropup' : 'dropdown'">
         <div
           class="dropdown-option"
           *ngFor="let option of options"
-          [class.selected]="option === selectedValue"
-          (click)="onSelect(option)"
+          [class.selected]="option.value === selectedValue"
+          (click)="onSelect(option.value, option.label)"
         >
-          {{ option }}
+          {{ option.label }}
         </div>
       </div>
     </div>
@@ -36,14 +38,13 @@ import { trigger, transition, style, animate } from '@angular/animations';
   styles: [`
     .custom-dropdown-container {
       position: relative;
-      width: 100%;
-      min-width: 180px;
+      min-width: 100px;
     }
 
     .custom-select {
       appearance: none;
       width: 100%;
-      padding: 12px 14px;
+      padding: 10px 14px;
       background-color: white;
       border: 1px solid var(--border-color);
       border-radius: 8px;
@@ -81,6 +82,7 @@ import { trigger, transition, style, animate } from '@angular/animations';
       transform: rotate(180deg);
     }
 
+    /* Standard dropdown (appears below) */
     .dropdown-options {
       position: absolute;
       top: calc(100% + 5px);
@@ -95,8 +97,15 @@ import { trigger, transition, style, animate } from '@angular/animations';
       border: 1px solid var(--border-color);
     }
 
+    /* Dropup option (appears above) */
+    .custom-dropdown-container.dropup .dropdown-options {
+      top: auto;
+      bottom: calc(100% + 5px);
+      box-shadow: 0 -10px 15px -3px rgba(0, 0, 0, 0.1), 0 -4px 6px -2px rgba(0, 0, 0, 0.05);
+    }
+
     .dropdown-option {
-      padding: 12px 14px;
+      padding: 10px 14px;
       cursor: pointer;
       transition: background-color 0.2s ease;
     }
@@ -118,40 +127,66 @@ import { trigger, transition, style, animate } from '@angular/animations';
     }
   `],
   animations: [
-    trigger('fadeInDown', [
-      transition(':enter', [
+    trigger('dropAnimation', [
+      transition('void => dropdown', [
         style({ opacity: 0, transform: 'translateY(-10px)' }),
         animate('200ms ease-out', style({ opacity: 1, transform: 'translateY(0)' }))
       ]),
-      transition(':leave', [
+      transition('dropdown => void', [
         animate('200ms ease-in', style({ opacity: 0, transform: 'translateY(-10px)' }))
+      ]),
+      transition('void => dropup', [
+        style({ opacity: 0, transform: 'translateY(10px)' }),
+        animate('200ms ease-out', style({ opacity: 1, transform: 'translateY(0)' }))
+      ]),
+      transition('dropup => void', [
+        animate('200ms ease-in', style({ opacity: 0, transform: 'translateY(10px)' }))
       ])
     ])
   ]
 })
-export class CustomDropdownComponent {
-  @Input() options: string[] = [];
+export class CustomDropdownComponent implements OnChanges {
+  @Input() options: Array<{value: string, label: string}> = [];
   @Input() selectedValue: string = '';
   @Input() placeholder: string = 'Select an option';
   @Input() label: string = '';
+  @Input() width: string = '100%';
+  @Input() dropup: boolean = false;
   @Output() selectionChange = new EventEmitter<string>();
 
   isOpen = false;
+  selectedLabel: string = '';
 
   constructor(private elementRef: ElementRef) {}
 
-  toggleDropdown() {
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['selectedValue'] || changes['options']) {
+      this.updateSelectedLabel();
+    }
+  }
+
+  updateSelectedLabel(): void {
+    if (this.selectedValue) {
+      const selectedOption = this.options.find(opt => opt.value === this.selectedValue);
+      this.selectedLabel = selectedOption ? selectedOption.label : '';
+    } else {
+      this.selectedLabel = '';
+    }
+  }
+
+  toggleDropdown(): void {
     this.isOpen = !this.isOpen;
   }
 
-  onSelect(option: string) {
-    this.selectedValue = option;
-    this.selectionChange.emit(option);
+  onSelect(value: string, label: string): void {
+    this.selectedValue = value;
+    this.selectedLabel = label;
+    this.selectionChange.emit(value);
     this.isOpen = false;
   }
 
   @HostListener('document:click', ['$event'])
-  onDocumentClick(event: MouseEvent) {
+  onDocumentClick(event: MouseEvent): void {
     if (!this.elementRef.nativeElement.contains(event.target)) {
       this.isOpen = false;
     }
