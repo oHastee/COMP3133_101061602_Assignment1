@@ -58,10 +58,28 @@ export class LoginComponent implements OnInit {
       this.isLoading = true;
       this.errorMessage = ''; // Reset any previous error
 
+      // Get raw values - don't modify the password at all
       const credentials = {
-        usernameOrEmail: this.loginForm.value.usernameOrEmail,
-        password: this.loginForm.value.password
+        usernameOrEmail: this.loginForm.value.usernameOrEmail?.trim() || '',
+        password: this.loginForm.value.password || '' // Keep exactly as entered
       };
+
+      console.log(`Login attempt for: ${credentials.usernameOrEmail}, password length: ${credentials.password.length}`);
+
+      // Check if this is the last created user from signup
+      const lastCreatedUser = sessionStorage.getItem('last_created_user');
+      const lastCreatedPassword = sessionStorage.getItem('last_created_password');
+
+      if (lastCreatedUser === credentials.usernameOrEmail) {
+        console.log('This is the last created user. Stored password length:',
+          lastCreatedPassword ? lastCreatedPassword.length : 'not found');
+
+        if (lastCreatedPassword && lastCreatedPassword !== credentials.password) {
+          console.log('WARNING: Password mismatch between stored and entered!');
+          console.log(`Stored: length=${lastCreatedPassword.length}`);
+          console.log(`Entered: length=${credentials.password.length}`);
+        }
+      }
 
       this.authService.login(credentials).subscribe({
         next: (res: any) => {
@@ -73,25 +91,44 @@ export class LoginComponent implements OnInit {
             localStorage.setItem('remember_user', 'true');
           }
 
+          // Clear temporary signup data if present
+          sessionStorage.removeItem('last_created_user');
+          sessionStorage.removeItem('last_created_password');
+
           this.router.navigate(['/employees']);
         },
         error: (err: any) => {
           this.isLoading = false;
 
-          // Retrieve error message from graphQLErrors if available; otherwise use err.message
-          const errorMsg =
-            err.graphQLErrors && err.graphQLErrors.length
-              ? err.graphQLErrors[0].message
-              : err.message;
+          // Get detailed error info
+          let errorMessage = '';
 
-          if (errorMsg.includes('No account found')) {
+          if (err.graphQLErrors && err.graphQLErrors.length > 0) {
+            errorMessage = err.graphQLErrors[0].message;
+            console.error('GraphQL Error:', err.graphQLErrors[0]);
+          } else if (err.networkError) {
+            errorMessage = 'Network error. Please check your connection.';
+            console.error('Network Error:', err.networkError);
+          } else {
+            errorMessage = err.message || 'An error occurred during login';
+            console.error('Other Error:', err);
+          }
+
+          // Log detailed debugging info
+          console.log('Login error details:', {
+            username: credentials.usernameOrEmail,
+            passwordLength: credentials.password.length,
+            errorMessage
+          });
+
+          // Set user-friendly error messages
+          if (errorMessage.includes('No account found')) {
             this.errorMessage = 'No account found with that username or email.';
-          } else if (errorMsg.includes('Incorrect password')) {
+          } else if (errorMessage.includes('Incorrect password')) {
             this.errorMessage = 'Incorrect password. Please try again.';
           } else {
             this.errorMessage = 'An error occurred during login. Please try again later.';
           }
-          console.error('Login error:', err);
         }
       });
     } else {
