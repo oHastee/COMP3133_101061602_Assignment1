@@ -24,7 +24,7 @@ async function startServer() {
     // Configure CORS
     app.use(cors({
         origin: NODE_ENV === 'production'
-            ? [CORS_ORIGIN, 'curious-fudge-8cd8c7.netlify.app']
+            ? ['https://curious-fudge-8cd8c7.netlify.app', 'https://your-netlify-app.netlify.app']
             : 'http://localhost:4200',
         credentials: true
     }));
