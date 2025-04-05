@@ -2,7 +2,7 @@
   "name": "101061602-comp3133-assignment2",
   "version": "0.0.0",
   "engines": {
-    "node": "16.x"
+    "node": "18.x"
   },
   "scripts": {
     "ng": "ng",
