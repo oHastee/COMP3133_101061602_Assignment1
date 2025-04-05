@@ -21,10 +21,9 @@ const UPLOAD_DIR = process.env.UPLOAD_DIR || 'uploads';
 async function startServer() {
     const app = express();
 
-    // Configure CORS
     app.use(cors({
         origin: NODE_ENV === 'production'
-            ? ['https://curious-fudge-8cd8c7.netlify.app', 'https://your-netlify-app.netlify.app']
+            ? ['https://curious-fudge-8cd8c7.netlify.app']
             : 'http://localhost:4200',
         credentials: true
     }));

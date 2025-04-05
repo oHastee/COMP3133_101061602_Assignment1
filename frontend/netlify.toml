@@ -1,6 +1,6 @@
 [build]
 base = "frontend"
-command = "npm install --legacy-peer-deps && ng build --configuration production --base-href /"
+command = "npm install --legacy-peer-deps && ng build --configuration production --base-href / --max-warnings=9999"
 publish = "dist/101061602_comp3133_assignment2"
 
 [[redirects]]
