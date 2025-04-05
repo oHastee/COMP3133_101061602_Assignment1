@@ -25,6 +25,7 @@
               "src/assets",
               "src/_redirects",
               "src/_headers",
+              "src/netlify.toml",
               {
                 "glob": "**/*",
                 "input": "public",
@@ -54,12 +55,13 @@
                   "maximumError": "32kB"
                 }
               ],
-              "outputHashing": "all"
+              "outputHashing": "all",
+              "sourceMap": false
             },
             "development": {
               "optimization": false,
               "extractLicenses": false,
-              "sourceMap": false
+              "sourceMap": true
             }
           },
           "defaultConfiguration": "production"
@@ -92,6 +94,7 @@
               "src/assets",
               "src/_redirects",
               "src/_headers",
+              "src/netlify.toml",
               {
                 "glob": "**/*",
                 "input": "public",
