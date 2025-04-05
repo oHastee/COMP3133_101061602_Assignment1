@@ -1,6 +1,9 @@
 {
   "name": "101061602-comp3133-assignment2",
   "version": "0.0.0",
+  "engines": {
+    "node": "16.x"
+  },
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -42,8 +45,5 @@
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
     "typescript": "~5.7.2"
-  },
-  "engines": {
-    "node": "16.x"
   }
 }
