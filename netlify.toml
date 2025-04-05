@@ -1,5 +1,6 @@
 [build]
-command = "npm run build:prod"
+base = "frontend"
+command = "npm install --legacy-peer-deps && npm run build:prod"
 publish = "dist/101061602_comp3133_assignment2"
 
 [[redirects]]

@@ -15,7 +15,7 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideHttpClient(withInterceptors([authInterceptor])),
     // Use hash location strategy
-    provideRouter(appRoutes, withHashLocation()),
+    provideRouter(appRoutes),
     provideAnimations(),
     provideApollo(() => {
       return {
