@@ -2,10 +2,10 @@
   "version": 2,
   "builds": [
     {
-      "src": "package.json",
+      "src": "frontend/package.json",
       "use": "@vercel/static-build",
       "config": {
-        "distDir": "dist/101061602_comp3133_assignment2/browser"
+        "distDir": "frontend/dist/101061602_comp3133_assignment2/browser"
       }
     }
   ],
