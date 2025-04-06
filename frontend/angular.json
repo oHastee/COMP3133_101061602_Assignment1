@@ -26,6 +26,7 @@
               "src/_redirects",
               "src/_headers",
               "src/netlify.toml",
+              "src/vercel.json",
               {
                 "glob": "**/*",
                 "input": "public",
@@ -95,6 +96,7 @@
               "src/_redirects",
               "src/_headers",
               "src/netlify.toml",
+              "src/vercel.json",
               {
                 "glob": "**/*",
                 "input": "public",

@@ -1,4 +1,4 @@
-// In app.config.ts
+// frontend/src/app/app.config.ts
 import { ApplicationConfig } from '@angular/core';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { provideRouter, withHashLocation } from '@angular/router';
@@ -15,7 +15,7 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideHttpClient(withInterceptors([authInterceptor])),
     // Use hash location strategy
-    provideRouter(appRoutes),
+    provideRouter(appRoutes, withHashLocation()),
     provideAnimations(),
     provideApollo(() => {
       return {
