@@ -22,8 +22,8 @@ async function startServer() {
     const app = express();
 
     app.use(cors({
-        origin: NODE_ENV === 'production'
-            ? ['https://curious-fudge-8cd8c7.netlify.app']
+        origin: process.env.NODE_ENV === 'production'
+            ? process.env.FRONTEND_URL || '*'
             : 'http://localhost:4200',
         credentials: true
     }));
@@ -41,7 +41,7 @@ async function startServer() {
     app.use('/uploads', express.static(path.join(__dirname, UPLOAD_DIR)));
 
     // Connect to MongoDB Atlas
-    mongoose.connect(MONGODB_URI, {
+    mongoose.connect(process.env.MONGODB_URI, {
         useNewUrlParser: true,
         useUnifiedTopology: true,
     })
