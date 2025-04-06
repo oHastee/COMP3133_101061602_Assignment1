@@ -7,11 +7,24 @@ const path = require('path');
 const User = require('../models/User');
 const Employee = require('../models/Employee');
 
+// Try to load Sharp for image processing
+let Sharp;
+try {
+    Sharp = require('sharp');
+} catch (err) {
+    console.warn('Sharp module not installed. Image resizing will be disabled.');
+    console.warn('Install with: npm install sharp');
+    Sharp = null;
+}
+
 // Environment variables
 const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret';
 const NODE_ENV = process.env.NODE_ENV || 'development';
 const PORT = process.env.PORT || 3000;
 const UPLOAD_DIR = process.env.UPLOAD_DIR || 'uploads';
+
+// Maximum allowed file size for base64 encoding (to avoid 413 errors)
+const MAX_BASE64_SIZE = 200 * 1024; // 200KB
 
 // Ensure upload directory exists
 const ensureUploadDirExists = () => {
@@ -153,13 +166,17 @@ const resolvers = {
             if (employee.employee_photo) {
                 try {
                     const photoPath = employee.employee_photo;
-                    const fileName = photoPath.substring(photoPath.lastIndexOf('/') + 1);
-                    const filePath = path.join(ensureUploadDirExists(), fileName);
+                    // Handle both URL and base64 formats
+                    if (photoPath.startsWith('http')) {
+                        const fileName = photoPath.substring(photoPath.lastIndexOf('/') + 1);
+                        const filePath = path.join(ensureUploadDirExists(), fileName);
 
-                    if (fs.existsSync(filePath)) {
-                        fs.unlinkSync(filePath);
-                        console.log(`Deleted profile picture: ${filePath}`);
+                        if (fs.existsSync(filePath)) {
+                            fs.unlinkSync(filePath);
+                            console.log(`Deleted profile picture: ${filePath}`);
+                        }
                     }
+                    // For base64, we don't need to delete any files
                 } catch (error) {
                     console.error('Error deleting profile picture:', error);
                     // Continue with employee deletion even if file deletion fails
@@ -169,20 +186,58 @@ const resolvers = {
             return employee;
         },
 
-        // File upload mutation for profile picture
+        // File upload mutation for profile picture - with image processing
         uploadProfilePicture: async (_, { file }) => {
-            const { createReadStream, filename } = await file;
+            try {
+                const { createReadStream, filename, mimetype } = await file;
+                console.log(`Processing file upload: ${filename}, type: ${mimetype}, size: unknown`);
 
-            // Convert to buffer and then to base64
-            const chunks = [];
-            for await (const chunk of createReadStream()) {
-                chunks.push(chunk);
+                // Convert to buffer
+                const chunks = [];
+                for await (const chunk of createReadStream()) {
+                    chunks.push(chunk);
+                }
+                const buffer = Buffer.concat(chunks);
+                console.log(`Received file size: ${buffer.length} bytes`);
+
+                // Check if we should resize (if buffer is large or Sharp is available)
+                let processedBuffer = buffer;
+                if (Sharp && buffer.length > MAX_BASE64_SIZE) {
+                    try {
+                        console.log('Resizing image with Sharp...');
+                        processedBuffer = await Sharp(buffer)
+                            .resize({
+                                width: 300,
+                                height: 300,
+                                fit: 'inside',
+                                withoutEnlargement: true
+                            })
+                            .jpeg({
+                                quality: 70,
+                                progressive: true,
+                                optimizeScans: true
+                            })
+                            .toBuffer();
+                        console.log(`Image resized. New size: ${processedBuffer.length} bytes`);
+                    } catch (resizeErr) {
+                        console.error('Error resizing image:', resizeErr);
+                        processedBuffer = buffer; // Fall back to original buffer
+                    }
+                }
+
+                // If still too large, warn in logs
+                if (processedBuffer.length > MAX_BASE64_SIZE) {
+                    console.warn(`WARNING: Image still large after processing: ${processedBuffer.length} bytes`);
+                    console.warn('This may cause issues with 413 Payload Too Large errors');
+                }
+
+                // Convert to base64 - use jpeg mimetype for consistency
+                const base64Image = `data:image/jpeg;base64,${processedBuffer.toString('base64')}`;
+                return base64Image;
+            } catch (error) {
+                console.error('File upload error:', error);
+                throw new Error(`Failed to process image: ${error.message}`);
             }
-            const buffer = Buffer.concat(chunks);
-            const base64Image = `data:image/jpeg;base64,${buffer.toString('base64')}`;
-
-            // Return the base64 string to store in MongoDB
-            return base64Image;
         }
     },
     Employee: {

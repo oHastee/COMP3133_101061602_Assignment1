@@ -124,36 +124,132 @@ export class EmployeeEditComponent implements OnInit {
     });
   }
 
-  onFileSelected(event: any): void {
+  async compressImage(file: File): Promise<File> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = (event: any) => {
+        const img = new Image();
+        img.src = event.target.result;
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+
+          // Calculate new dimensions (max 300x300)
+          let width = img.width;
+          let height = img.height;
+          if (width > height) {
+            if (width > 300) {
+              height *= 300 / width;
+              width = 300;
+            }
+          } else {
+            if (height > 300) {
+              width *= 300 / height;
+              height = 300;
+            }
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+          ctx!.drawImage(img, 0, 0, width, height);
+
+          // Convert to file with reduced quality
+          canvas.toBlob((blob) => {
+            if (blob) {
+              const compressedFile = new File([blob], file.name, {
+                type: 'image/jpeg',
+                lastModified: Date.now()
+              });
+              resolve(compressedFile);
+            } else {
+              reject(new Error('Failed to create blob from canvas'));
+            }
+          }, 'image/jpeg', 0.7); // 70% quality
+        };
+        img.onerror = () => reject(new Error('Failed to load image'));
+      };
+      reader.onerror = (error) => reject(error);
+    });
+  }
+
+  async onFileSelected(event: any): Promise<void> {
     const file: File = event.target.files[0];
     if (file) {
-      this.selectedFile = file;
+      try {
+        console.log(`Original file: ${file.name}, size: ${file.size} bytes, type: ${file.type}`);
 
-      // Create image preview
-      const reader = new FileReader();
-      reader.onload = () => {
-        this.imagePreviewUrl = reader.result;
-      };
-      reader.readAsDataURL(file);
+        // File size check (temporary solution until backend is fixed)
+        if (file.size > 300 * 1024) { // 300KB limit
+          this.errorMessage = 'File size is too large. Please choose a file smaller than 300KB or it will be compressed.';
+        }
 
-      // Upload the file
-      this.apollo.mutate({
-        mutation: UPLOAD_PROFILE_PICTURE,
-        variables: { file },
-        context: {
-          useMultipart: true
-        }
-      }).subscribe({
-        next: (res: any) => {
-          // Set the returned URL into the employee_photo field
-          this.employeeForm.patchValue({ employee_photo: res.data.uploadProfilePicture });
-          console.log('File uploaded successfully', res.data.uploadProfilePicture);
-        },
-        error: (err) => {
-          console.error('File upload error:', err);
-          this.errorMessage = 'Failed to upload profile picture. Please try again.';
-        }
-      });
+        // Compress the image
+        const compressedFile = await this.compressImage(file);
+        console.log(`Compressed file size: ${compressedFile.size} bytes`);
+
+        this.selectedFile = compressedFile;
+
+        // Create image preview
+        const reader = new FileReader();
+        reader.onload = () => {
+          this.imagePreviewUrl = reader.result;
+          console.log('Image preview created successfully');
+        };
+        reader.onerror = (error) => {
+          console.error('Error creating image preview:', error);
+        };
+        reader.readAsDataURL(compressedFile);
+
+        // Upload the compressed file
+        this.apollo.mutate({
+          mutation: UPLOAD_PROFILE_PICTURE,
+          variables: { file: compressedFile },
+          context: {
+            useMultipart: true
+          }
+        }).subscribe({
+          next: (res: any) => {
+            // Set the returned URL into the employee_photo field
+            this.employeeForm.patchValue({ employee_photo: res.data.uploadProfilePicture });
+            console.log('File uploaded successfully', res.data.uploadProfilePicture);
+          },
+          error: (err) => {
+            console.error('File upload error:', err);
+
+            // Detailed error logging
+            if (err.networkError) {
+              console.error('Network error details:', err.networkError);
+              if (err.networkError.statusCode) {
+                console.error('Status code:', err.networkError.statusCode);
+              }
+              if (err.networkError.error) {
+                console.error('Network error body:', err.networkError.error);
+              }
+            }
+
+            if (err.graphQLErrors && err.graphQLErrors.length > 0) {
+              console.error('GraphQL errors:', err.graphQLErrors);
+              err.graphQLErrors.forEach((graphQLError: any, index: number) => {
+                console.error(`GraphQL error ${index + 1}:`, graphQLError.message);
+                if (graphQLError.extensions) {
+                  console.error('Extensions:', graphQLError.extensions);
+                }
+              });
+            }
+
+            // Set user-friendly error message
+            if (err.networkError && err.networkError.statusCode === 413) {
+              this.errorMessage = 'The image is too large. Please choose a smaller image or compress it further.';
+            } else {
+              this.errorMessage = 'Failed to upload profile picture. Please try again.';
+            }
+          }
+        });
+      } catch (error) {
+        console.error('Error processing image:', error);
+        this.errorMessage = 'Failed to process image. Please try a different file.';
+      }
     }
   }
 
@@ -196,6 +292,8 @@ export class EmployeeEditComponent implements OnInit {
       this.employeeService.updateEmployee(updateData).subscribe({
         next: (res: any) => {
           this.isLoading = false;
+          this.successMessage = 'Employee updated successfully!';
+          console.log('Employee updated successfully:', res);
 
           // Navigate immediately to employees page for smoother transition
           this.router.navigate(['/employees']);
@@ -203,7 +301,18 @@ export class EmployeeEditComponent implements OnInit {
         error: (err: any) => {
           this.isLoading = false;
           console.error('Error updating employee:', err);
-          this.errorMessage = 'An error occurred while updating the employee. Please try again.';
+
+          // Detailed error logging
+          if (err.networkError) {
+            console.error('Network error details:', err.networkError);
+          }
+
+          if (err.graphQLErrors && err.graphQLErrors.length > 0) {
+            console.error('GraphQL errors:', err.graphQLErrors);
+            this.errorMessage = err.graphQLErrors[0].message || 'An error occurred while updating the employee.';
+          } else {
+            this.errorMessage = 'An error occurred while updating the employee. Please try again.';
+          }
         }
       });
     }
