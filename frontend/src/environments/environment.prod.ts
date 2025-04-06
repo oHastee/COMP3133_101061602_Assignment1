@@ -1,5 +1,5 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://your-backend.vercel.app',
-  graphqlUri: 'https://your-backend.vercel.app/graphql'
+  apiUrl: 'https://employee-management-api-19ru.onrender.com',
+  graphqlUri: 'https://employee-management-api-19ru.onrender.com/graphql'
 };
