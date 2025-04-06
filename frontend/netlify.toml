@@ -1,7 +1,7 @@
 [build]
 base = "frontend"
 command = "npm install --legacy-peer-deps && npm run build"
-publish = "dist/101061602_comp3133_assignment2/browser"
+publish = "dist/101061602_comp3133_assignment2/browser/browser"
 
 [[redirects]]
 from = "/*"
