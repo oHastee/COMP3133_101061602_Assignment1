@@ -16,7 +16,6 @@ const PORT = process.env.PORT || 3000;
 const MONGODB_URI = process.env.MONGODB_URI;
 const NODE_ENV = process.env.NODE_ENV || 'development';
 const CORS_ORIGIN = process.env.CORS_ORIGIN || 'http://localhost:4200';
-const UPLOAD_DIR = process.env.UPLOAD_DIR || 'uploads';
 
 async function startServer() {
     const app = express();
@@ -30,15 +29,6 @@ async function startServer() {
 
     // Enable file uploads via graphql-upload middleware
     app.use(graphqlUploadExpress({ maxFileSize: 10000000, maxFiles: 1 }));
-
-    // Ensure upload directory exists
-    const uploadPath = path.join(__dirname, UPLOAD_DIR);
-    if (!require('fs').existsSync(uploadPath)) {
-        require('fs').mkdirSync(uploadPath, { recursive: true });
-    }
-
-    // Serve static files from the uploads folder
-    app.use('/uploads', express.static(path.join(__dirname, UPLOAD_DIR)));
 
     // Connect to MongoDB Atlas
     mongoose.connect(process.env.MONGODB_URI, {
