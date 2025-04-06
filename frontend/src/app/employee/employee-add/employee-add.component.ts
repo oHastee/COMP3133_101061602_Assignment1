@@ -71,12 +71,17 @@ export class EmployeeAddComponent implements OnInit {
   onFileSelected(event: any): void {
     const file: File = event.target.files[0];
     if (file) {
+      console.log(`File selected: ${file.name}, size: ${file.size} bytes, type: ${file.type}`);
       this.selectedFile = file;
 
       // Create image preview
       const reader = new FileReader();
       reader.onload = () => {
         this.imagePreviewUrl = reader.result;
+        console.log('Image preview created successfully');
+      };
+      reader.onerror = (error) => {
+        console.error('Error creating image preview:', error);
       };
       reader.readAsDataURL(file);
 
@@ -95,6 +100,29 @@ export class EmployeeAddComponent implements OnInit {
         },
         error: (err) => {
           console.error('File upload error:', err);
+
+          // Detailed error logging
+          if (err.networkError) {
+            console.error('Network error details:', err.networkError);
+            if (err.networkError.statusCode) {
+              console.error('Status code:', err.networkError.statusCode);
+            }
+            if (err.networkError.error) {
+              console.error('Network error body:', err.networkError.error);
+            }
+          }
+
+          if (err.graphQLErrors && err.graphQLErrors.length > 0) {
+            console.error('GraphQL errors:', err.graphQLErrors);
+            err.graphQLErrors.forEach((graphQLError: any, index: number) => {
+              console.error(`GraphQL error ${index + 1}:`, graphQLError.message);
+              if (graphQLError.extensions) {
+                console.error('Extensions:', graphQLError.extensions);
+              }
+            });
+          }
+
+          // Set user-friendly error message
           this.errorMessage = 'Failed to upload profile picture. Please try again.';
         }
       });
@@ -127,8 +155,11 @@ export class EmployeeAddComponent implements OnInit {
     // Convert "YYYY-MM-DD" to a UTC ISO string at midnight
     formValue.date_of_joining = this.fromYYYYMMDDtoUTC(formValue.date_of_joining);
 
+    console.log('Submitting employee data:', formValue);
+
     this.employeeService.addEmployee(formValue).subscribe({
       next: (res: any) => {
+        console.log('Employee added successfully:', res);
         this.isLoading = false;
         this.successMessage = 'Employee added successfully!';
 
@@ -139,7 +170,18 @@ export class EmployeeAddComponent implements OnInit {
       error: (err: any) => {
         this.isLoading = false;
         console.error('Error adding employee:', err);
-        this.errorMessage = 'An error occurred while adding the employee. Please try again.';
+
+        // Detailed error logging
+        if (err.networkError) {
+          console.error('Network error details:', err.networkError);
+        }
+
+        if (err.graphQLErrors && err.graphQLErrors.length > 0) {
+          console.error('GraphQL errors:', err.graphQLErrors);
+          this.errorMessage = err.graphQLErrors[0].message || 'An error occurred while adding the employee.';
+        } else {
+          this.errorMessage = 'An error occurred while adding the employee. Please try again.';
+        }
       }
     });
   }
