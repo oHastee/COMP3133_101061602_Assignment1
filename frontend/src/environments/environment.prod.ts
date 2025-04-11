@@ -1,5 +1,5 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://employee-management-api-19ru.onrender.com',
-  graphqlUrl: 'https://employee-management-api-19ru.onrender.com/graphql'
+  apiUrl: 'https://ems-angular-26r5r.ondigitalocean.app',
+  graphqlUrl: 'https://ems-angular-26r5r.ondigitalocean.app/graphql'
 };
